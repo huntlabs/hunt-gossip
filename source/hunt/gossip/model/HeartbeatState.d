@@ -53,7 +53,7 @@ public class HeartbeatState {
     public string toString() {
         return "HeartbeatState{" ~
                 "heartbeatTime=" ~ heartbeatTime ~
-                ", version=" ~ version +
+                ", version=" ~ version ~
                 '}';
     }
 }

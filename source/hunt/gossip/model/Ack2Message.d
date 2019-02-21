@@ -15,8 +15,8 @@
 module hunt.gossip.model.Ack2Message;
 
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+// import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+// import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import hunt.gossip.core.CustomDeserializer;
 import hunt.gossip.core.CustomSerializer;
 
@@ -25,8 +25,8 @@ import hunt.collection.Map;
 
 
 public class Ack2Message : Serializable {
-    @JsonSerialize(keyUsing = CustomSerializer.class)
-    @JsonDeserialize(keyUsing = CustomDeserializer.class)
+    // @JsonSerialize(keyUsing = CustomSerializer.class)
+    // @JsonDeserialize(keyUsing = CustomDeserializer.class)
     private Map!(GossipMember, HeartbeatState) endpoints;
 
     public Ack2Message() {
@@ -40,7 +40,7 @@ public class Ack2Message : Serializable {
     override
     public string toString() {
         return "GossipDigestAck2Message{" ~
-                "endpoints=" ~ endpoints +
+                "endpoints=" ~ endpoints ~
                 '}';
     }
 

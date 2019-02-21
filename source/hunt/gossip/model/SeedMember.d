@@ -93,10 +93,10 @@ public class SeedMember : Serializable {
     override
     public string toString() {
         return "SeedMember{" ~
-                "cluster='" ~ cluster + '\'' ~
-                ", ipAddress='" ~ ipAddress + '\'' ~
+                "cluster='" ~ cluster ~ '\'' ~
+                ", ipAddress='" ~ ipAddress ~ '\'' ~
                 ", port=" ~ port ~
-                ", id='" ~ id + '\'' +
+                ", id='" ~ id ~ '\'' ~
                 '}';
     }
 }

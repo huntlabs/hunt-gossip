@@ -81,11 +81,11 @@ public class GossipMember : Serializable {
     override
     public string toString() {
         return "GossipMember{" ~
-                "cluster='" ~ cluster + '\'' ~
-                ", ipAddress='" ~ ipAddress + '\'' ~
+                "cluster='" ~ cluster ~ '\'' ~
+                ", ipAddress='" ~ ipAddress ~ '\'' ~
                 ", port=" ~ port ~
-                ", id='" ~ id + '\'' ~
-                ", state=" ~ state +
+                ", id='" ~ id ~ '\'' ~
+                ", state=" ~ state ~
                 '}';
     }
 

@@ -14,7 +14,7 @@
 
 module hunt.gossip.handler.SyncMessageHandler;
 
-import io.vertx.core.buffer.Buffer;
+import hunt.gossip.util.Buffer;
 import io.vertx.core.json.JsonArray;
 import hunt.gossip.core.GossipManager;
 import hunt.gossip.core.Serializer;
@@ -68,7 +68,7 @@ public class SyncMessageHandler : MessageHandler {
                     GossipManager.getInstance().getSettings().getMsgService().sendMsg(host[0], Integer.valueOf(host[1]), ackBuffer);
                 }
             } catch (NumberFormatException e) {
-                LOGGER.error(e.getMessage());
+                logError(e.getMessage());
             }
         }
     }
@@ -98,7 +98,7 @@ public class SyncMessageHandler : MessageHandler {
                 olders.add(g);
             }
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            logError(e.getMessage());
         }
     }
 }

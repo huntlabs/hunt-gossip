@@ -15,8 +15,7 @@
 module hunt.gossip.core.GossipService;
 
 import io.netty.util.internal.StringUtil;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
+import hunt.logging;
 import hunt.gossip.event.GossipListener;
 import hunt.gossip.model.SeedMember;
 
@@ -40,7 +39,7 @@ public class GossipService {
 
     public void start() {
         if (getGossipManager().isWorking()) {
-            LOGGER.info("Cgossip already workinig");
+            logInfo("Cgossip already workinig");
             return;
         }
         GossipManager.getInstance().start();

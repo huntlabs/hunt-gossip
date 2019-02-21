@@ -14,11 +14,10 @@
 
 module hunt.gossip.core.GossipManager;
 
-import io.vertx.core.buffer.Buffer;
+import hunt.gossip.util.Buffer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
+import hunt.logging;
 import hunt.gossip.event.GossipListener;
 import hunt.gossip.model.Ack2Message;
 import hunt.gossip.model.AckMessage;
@@ -86,7 +85,7 @@ public class GossipManager {
     }
 
     protected void start() {
-        LOGGER.info(string.format("Starting gossip! cluster[%s] ip[%s] port[%d] id[%s]", localGossipMember.getCluster(), localGossipMember.getIpAddress(), localGossipMember.getPort(), localGossipMember.getId()
+        logInfo(string.format("Starting gossip! cluster[%s] ip[%s] port[%d] id[%s]", localGossipMember.getCluster(), localGossipMember.getIpAddress(), localGossipMember.getPort(), localGossipMember.getId()
         ));
         isWorking = true;
         settings.getMsgService().listen(getSelf().getIpAddress(), getSelf().getPort());
@@ -150,8 +149,8 @@ public class GossipManager {
                 up(getSelf());
             }
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("sync data");
-                LOGGER.trace(string.format("Now my heartbeat version is %d", newversion));
+                trace("sync data");
+                trace(string.format("Now my heartbeat version is %d", newversion));
             }
 
             List!(GossipDigest) digests = new ArrayList<>();
@@ -173,12 +172,12 @@ public class GossipManager {
                 }
                 checkStatus();
                 if (LOGGER.isTraceEnabled()) {
-                    LOGGER.trace("live member : " ~ getLiveMembers());
-                    LOGGER.trace("dead member : " ~ getDeadMembers());
-                    LOGGER.trace("endpoint : " ~ getEndpointMembers());
+                    trace("live member : " ~ getLiveMembers());
+                    trace("dead member : " ~ getDeadMembers());
+                    trace("endpoint : " ~ getEndpointMembers());
                 }
             } catch (UnknownHostException e) {
-                LOGGER.error(e.getMessage());
+                logError(e.getMessage());
             }
 
         }
@@ -242,7 +241,7 @@ public class GossipManager {
                     remoteStateReplaceLocalState(m, remoteState);
                 }
             } catch (Exception e) {
-                LOGGER.error(e.getMessage());
+                logError(e.getMessage());
             }
         }
     }
@@ -341,7 +340,7 @@ public class GossipManager {
                 settings.getMsgService().sendMsg(target.getIpAddress(), target.getPort(), buffer);
                 return settings.getSeedMembers().contains(gossipMember2SeedMember(target));
             } catch (Exception e) {
-                LOGGER.error(e.getMessage());
+                logError(e.getMessage());
             }
         }
         return false;
@@ -362,7 +361,7 @@ public class GossipManager {
                 settings.getMsgService().sendMsg(target.getIpAddress(), target.getPort(), buffer);
                 return true;
             } catch (Exception e) {
-                LOGGER.error(e.getMessage());
+                logError(e.getMessage());
             }
         }
         return false;
@@ -384,7 +383,7 @@ public class GossipManager {
                     long now = System.currentTimeMillis();
                     long duration = now - state.getHeartbeatTime();
                     long convictedTime = convictedTime();
-                    LOGGER.info("check : " ~ k.toString() ~ " state : " ~ state.toString() ~ " duration : " ~ duration ~ " convictedTime : " ~ convictedTime);
+                    logInfo("check : " ~ k.toString() ~ " state : " ~ state.toString() ~ " duration : " ~ duration ~ " convictedTime : " ~ convictedTime);
                     if (duration > convictedTime && (isAlive(k) || getLiveMembers().contains(k))) {
                         downing(k, state);
                     }
@@ -395,7 +394,7 @@ public class GossipManager {
             }
             checkCandidate();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            logError(e.getMessage());
         }
     }
 
@@ -437,7 +436,7 @@ public class GossipManager {
 //    }
 
     public void down(GossipMember member) {
-        LOGGER.info("down ~~");
+        logInfo("down ~~");
         try {
             rwlock.writeLock().lock();
             member.setState(GossipState.DOWN);
@@ -448,7 +447,7 @@ public class GossipManager {
 //            clearExecutor.schedule(() -> clearMember(member), getSettings().getDeleteThreshold() * getSettings().getGossipInterval(), TimeUnit.MILLISECONDS);
             fireGossipEvent(member, GossipState.DOWN);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            logError(e.getMessage());
         } finally {
             rwlock.writeLock().unlock();
         }
@@ -466,14 +465,14 @@ public class GossipManager {
             }
             if (deadMembers.contains(member)) {
                 deadMembers.remove(member);
-                LOGGER.info("up ~~");
+                logInfo("up ~~");
                  if (!member.equals(getSelf())) {
                     fireGossipEvent(member, GossipState.UP);
                 }
             }
            
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            logError(e.getMessage());
         } finally {
             rwlock.writeLock().unlock();
         }
@@ -481,7 +480,7 @@ public class GossipManager {
     }
 
     private void downing(GossipMember member, HeartbeatState state) {
-        LOGGER.info("downing ~~");
+        logInfo("downing ~~");
         try {
             if (candidateMembers.containsKey(member)) {
                 CandidateMemberState cState = candidateMembers.get(member);
@@ -494,7 +493,7 @@ public class GossipManager {
                 candidateMembers.put(member, new CandidateMemberState(state.getHeartbeatTime()));
             }
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            logError(e.getMessage());
         }
     }
 

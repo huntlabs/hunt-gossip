@@ -15,20 +15,20 @@
 module hunt.gossip.core.CustomSerializer;
 
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import hunt.gossip.model.GossipMember;
+// import com.fasterxml.jackson.core.JsonGenerator;
+// import com.fasterxml.jackson.databind.JsonSerializer;
+// import com.fasterxml.jackson.databind.ObjectMapper;
+// import com.fasterxml.jackson.databind.SerializerProvider;
+// import hunt.gossip.model.GossipMember;
 
-import hunt.Exceptions;
+// import hunt.Exceptions;
 
 
-public class CustomSerializer : JsonSerializer!(GossipMember) {
+// public class CustomSerializer : JsonSerializer!(GossipMember) {
 
-    override
-    public void serialize(GossipMember value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        gen.writeFieldName(mapper.writeValueAsString(value));
-    }
-}
+//     override
+//     public void serialize(GossipMember value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+//         ObjectMapper mapper = new ObjectMapper();
+//         gen.writeFieldName(mapper.writeValueAsString(value));
+//     }
+// }

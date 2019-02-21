@@ -14,7 +14,7 @@
 
 module hunt.gossip.handler.AckMessageHandler;
 
-import io.vertx.core.buffer.Buffer;
+import hunt.gossip.util.Buffer;
 import io.vertx.core.json.JsonObject;
 import hunt.gossip.core.GossipManager;
 import hunt.gossip.model.Ack2Message;

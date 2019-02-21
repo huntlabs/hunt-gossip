@@ -14,8 +14,7 @@
 
 module hunt.gossip.handler.MessageHandler;
 
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
+import hunt.logging;
 
 
 public interface MessageHandler {

@@ -16,7 +16,7 @@ module hunt.gossip.net.udp.UDPMsgService;
 
 import io.netty.util.internal.StringUtil;
 import io.vertx.core.Vertx;
-import io.vertx.core.buffer.Buffer;
+import hunt.gossip.util.Buffer;
 import io.vertx.core.datagram.DatagramSocket;
 import io.vertx.core.datagram.DatagramSocketOptions;
 import io.vertx.core.json.JsonObject;
@@ -41,7 +41,7 @@ public class UDPMsgService : MsgService {
             if (asyncResult.succeeded()) {
                 socket.handler(packet -> handleMsg(packet.data()));
             } else {
-                LOGGER.error("Listen failed " ~ asyncResult.cause());
+                logError("Listen failed " ~ asyncResult.cause());
             }
         });
     }
@@ -54,7 +54,7 @@ public class UDPMsgService : MsgService {
         string cluster = j.getString(GossipMessageFactory.KEY_CLUSTER);
         string from = j.getString(GossipMessageFactory.KEY_FROM);
         if (StringUtil.isNullOrEmpty(cluster) || !GossipManager.getInstance().getCluster().equals(cluster)) {
-            LOGGER.error("This message shouldn't exist my world!" ~ data.toString());
+            logError("This message shouldn't exist my world!" ~ data.toString());
             return;
         }
         MessageHandler handler = null;
@@ -68,7 +68,7 @@ public class UDPMsgService : MsgService {
         } else if (type == MessageType.SHUTDOWN) {
             handler = new ShutdownMessageHandler();
         } else {
-            LOGGER.error("Not supported message type");
+            logError("Not supported message type");
         }
         if (handler != null) {
             handler.handle(cluster, _data, from);
@@ -88,9 +88,9 @@ public class UDPMsgService : MsgService {
         if (socket != null) {
             socket.close(asyncResult -> {
                 if (asyncResult.succeeded()) {
-                    LOGGER.info("Socket was close!");
+                    logInfo("Socket was close!");
                 } else {
-                    LOGGER.error("Close socket an error has occurred. " ~ asyncResult.cause().getMessage());
+                    logError("Close socket an error has occurred. " ~ asyncResult.cause().getMessage());
                 }
             });
         }

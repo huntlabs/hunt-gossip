@@ -14,13 +14,12 @@
 
 module hunt.gossip.net.MsgService;
 
-import io.vertx.core.buffer.Buffer;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
-
+import hunt.gossip.util.Buffer;
+import hunt.logging;
+import hunt.Integer;
 
 public interface MsgService {
-    Logger LOGGER = LoggerFactory.getLogger(MsgService.class);
+    // Logger LOGGER = LoggerFactory.getLogger(MsgService.class);
 
     void listen(string ipAddress, int port);
 

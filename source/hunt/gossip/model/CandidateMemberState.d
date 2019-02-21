@@ -52,7 +52,7 @@ public class CandidateMemberState {
     public string toString() {
         return "CandidateMemberState{" ~
                 "heartbeatTime=" ~ heartbeatTime ~
-                ", downingCount=" ~ downingCount.get() +
+                ", downingCount=" ~ downingCount.get() ~
                 '}';
     }
 }

@@ -14,8 +14,8 @@
 
 module hunt.gossip.model.AckMessage;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+// import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+// import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import hunt.gossip.core.CustomDeserializer;
 import hunt.gossip.core.CustomSerializer;
 
@@ -27,8 +27,8 @@ import hunt.collection.Map;
 public class AckMessage : Serializable {
     private List!(GossipDigest) olders;
 
-    @JsonSerialize(keyUsing = CustomSerializer.class)
-    @JsonDeserialize(keyUsing = CustomDeserializer.class)
+    // @JsonSerialize(keyUsing = CustomSerializer.class)
+    // @JsonDeserialize(keyUsing = CustomDeserializer.class)
     private Map!(GossipMember, HeartbeatState) newers;
 
     public AckMessage() {
@@ -59,7 +59,7 @@ public class AckMessage : Serializable {
     public string toString() {
         return "AckMessage{" ~
                 "olders=" ~ olders ~
-                ", newers=" ~ newers +
+                ", newers=" ~ newers ~
                 '}';
     }
 

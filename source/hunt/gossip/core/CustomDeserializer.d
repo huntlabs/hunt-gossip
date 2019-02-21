@@ -17,19 +17,19 @@ module hunt.gossip.core.CustomDeserializer;
 // import com.fasterxml.jackson.databind.DeserializationContext;
 // import com.fasterxml.jackson.databind.KeyDeserializer;
 // import com.fasterxml.jackson.databind.ObjectMapper;
-import hunt.gossip.model.GossipMember;
+// import hunt.gossip.model.GossipMember;
 
-import hunt.Exceptions;
+// import hunt.Exceptions;
 
 
-public class CustomDeserializer : KeyDeserializer {
-    ObjectMapper mapper = new ObjectMapper();
+// public class CustomDeserializer : KeyDeserializer {
+//     ObjectMapper mapper = new ObjectMapper();
 
-    public CustomDeserializer() {
-    }
+//     public CustomDeserializer() {
+//     }
 
-    override
-    public Object deserializeKey(string key, DeserializationContext ctxt) throws IOException {
-        return mapper.readValue(key, GossipMember.class);
-    }
-}
+//     override
+//     public Object deserializeKey(string key, DeserializationContext ctxt) throws IOException {
+//         return mapper.readValue(key, GossipMember.class);
+//     }
+// }

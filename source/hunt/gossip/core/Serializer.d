@@ -14,7 +14,7 @@
 
 module hunt.gossip.core.Serializer;
 
-import io.vertx.core.buffer.Buffer;
+import hunt.gossip.util.Buffer;
 import io.vertx.core.json.JsonObject;
 
 import java.io.Serializable;

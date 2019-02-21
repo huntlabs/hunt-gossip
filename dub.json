@@ -1,0 +1,10 @@
+{
+	"name": "hunt-gossip",
+	"description": "A Apache V2 gossip protocol implementation for D",
+    "copyright": "Copyright (C) 2018-2019, HuntLabs",
+    "homepage": "https://www.huntlabs.net/",
+	"license": "Apache-2.0",
+	"dependencies": {
+        "hunt":"~>1.1.0"
+    }
+}

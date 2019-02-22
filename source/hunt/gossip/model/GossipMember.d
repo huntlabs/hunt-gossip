@@ -17,6 +17,7 @@ module hunt.gossip.model.GossipMember;
 import hunt.io.Common;
 import hunt.Integer;
 import hunt.gossip.model.GossipState;
+import std.conv;
 
 public class GossipMember : Serializable {
     private string cluster;
@@ -69,7 +70,7 @@ public class GossipMember : Serializable {
     }
 
     public string getId() {
-        if (id == null) {
+        if (id is null) {
             setId(ipAndPort());
         }
         return id;
@@ -84,37 +85,37 @@ public class GossipMember : Serializable {
         return "GossipMember{" ~
                 "cluster='" ~ cluster ~ '\'' ~
                 ", ipAddress='" ~ ipAddress ~ '\'' ~
-                ", port=" ~ port ~
+                ", port=" ~ port.to!string ~
                 ", id='" ~ id ~ '\'' ~
-                ", state=" ~ state ~
+                ", state=" ~ state.state() ~
                 '}';
     }
 
     override
     public bool opEquals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this is o) return true;
+        if (o is null || typeid(this) != typeid(o)) return false;
 
         GossipMember member = cast(GossipMember) o;
 
-        if (!cluster.opEquals(member.cluster)) return false;
-        if (!ipAddress.opEquals(member.ipAddress)) return false;
-        return port.opEquals(member.port);
+        if (!(cluster == member.cluster)) return false;
+        if (!(ipAddress == member.ipAddress)) return false;
+        return port.intValue() == member.port.intValue();
     }
 
     override
     public  size_t toHash() @trusted nothrow {
-        int result = cluster.toHash();
-        result = 31 * result + ipAddress.toHash();
-        result = 31 * result + port.toHash();
+        int result = cluster.hashOf();
+        result = 31 * result + ipAddress.hashOf();
+        result = 31 * result + port.hashOf();
         return result;
     }
 
     public string ipAndPort() {
-        return ipAddress.concat(":").concat(string.valueOf(port));
+        return ipAddress ~ (":") ~ (to!string(port));
     }
     
     public string eigenvalue(){
-        return getCluster().concat(":").concat(getIpAddress()).concat(":").concat(getPort().toString());
+        return getCluster() ~ (":") ~ (getIpAddress()) ~ (":") ~ (getPort().toString());
     }
 }

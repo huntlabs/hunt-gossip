@@ -62,8 +62,8 @@ public class AckMessage : Serializable {
     override
     public string toString() {
         return "AckMessage{" ~
-                "olders=" ~ olders ~
-                ", newers=" ~ newers ~
+                "olders=" ~ olders.toString ~
+                ", newers=" ~ newers.toString ~
                 '}';
     }
 

@@ -42,7 +42,7 @@ public class Ack2Message : Serializable {
     override
     public string toString() {
         return "GossipDigestAck2Message{" ~
-                "endpoints=" ~ endpoints ~
+                "endpoints=" ~ endpoints.toString ~
                 '}';
     }
 

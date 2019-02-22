@@ -21,9 +21,14 @@ public struct MessageType {
     enum MessageType ACK2_MESSAGE = MessageType("ack2_message");
     enum MessageType SHUTDOWN = MessageType("shutdown");
 
-    private  string type;
+    private  string _type;
 
     this(string type) {
-        this.type = type;
+        this._type = type;
+    }
+
+    public string type()
+    {
+        return _type;
     }
 }

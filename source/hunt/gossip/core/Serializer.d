@@ -16,7 +16,7 @@ module hunt.gossip.core.Serializer;
 
 import hunt.gossip.util.Buffer;
 import std.json;
-
+import hunt.logging;
 import hunt.io.Common;
 import hunt.gossip.util.JsonObject;
 
@@ -34,23 +34,23 @@ public class Serializer {
     private this() {
     }
 
-    public Buffer encode(Serializable obj) {
+    public static Buffer encode(T)(Serializable obj) {
         Buffer buffer = Buffer.buffer();
         try {
-            buffer.appendString(JsonObject.mapFrom(obj).encode());
+            buffer.appendString(JsonObject.mapFrom(cast(T)obj).encode());
         } catch (Exception e) {
-            e.printStackTrace();
+            logError(e.msg);
         }
         return buffer;
     }
 
     public T decode(T)(Buffer buffer) {
         T gdsm = null;
-        if (buffer != null) {
+        if (buffer !is null) {
             try {
                 gdsm = buffer.toJsonObject().mapTo!(T)();
             } catch (Exception e) {
-                e.printStackTrace();
+                logError(e.msg);
             }
         }
         return gdsm;

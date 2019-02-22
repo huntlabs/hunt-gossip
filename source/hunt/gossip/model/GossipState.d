@@ -20,10 +20,14 @@ public struct GossipState {
     enum GossipState DOWN = GossipState("down");
     enum GossipState JOIN = GossipState("join");
 
-    private  string state;
+    private  string _state;
 
     this(string state) {
-        this.state = state;
+        this._state = state;
     }
 
+    public string state()
+    {
+        return _state;
+    }
 }

@@ -68,26 +68,26 @@ public class SeedMember : Serializable {
     }
     
     public string eigenvalue(){
-        return getCluster().concat(":").concat(getIpAddress()).concat(":").concat(getPort().toString());
+        return getCluster() ~ (":") ~ (getIpAddress()) ~ (":") ~ (getPort().toString());
     }
 
     override
     public bool opEquals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this is o) return true;
+        if (o is null || typeid(this) != typeid(o)) return false;
 
         SeedMember that = cast(SeedMember) o;
 
-        if (!cluster.opEquals(that.cluster)) return false;
-        if (!ipAddress.opEquals(that.ipAddress)) return false;
-        return port.opEquals(that.port);
+        if (!(cluster == that.cluster)) return false;
+        if (!(ipAddress == that.ipAddress)) return false;
+        return port.intValue() == that.port.intValue();
     }
 
     override
     public size_t toHash() @trusted nothrow {
-        int result = cluster.toHash();
-        result = 31 * result + ipAddress.toHash();
-        result = 31 * result + port.toHash();
+        int result = cluster.hashOf();
+        result = 31 * result + ipAddress.hashOf();
+        result = 31 * result + port.hashOf();
         return result;
     }
 
@@ -96,7 +96,7 @@ public class SeedMember : Serializable {
         return "SeedMember{" ~
                 "cluster='" ~ cluster ~ '\'' ~
                 ", ipAddress='" ~ ipAddress ~ '\'' ~
-                ", port=" ~ port ~
+                ", port=" ~ port.toString ~
                 ", id='" ~ id ~ '\'' ~
                 '}';
     }

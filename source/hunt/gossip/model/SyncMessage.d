@@ -51,7 +51,7 @@ public class SyncMessage : Serializable {
     public string toString() {
         return "GossipDigestSyncMessage{" ~
                 "cluster='" ~ cluster ~ '\'' ~
-                ", digestList=" ~ digestList ~
+                ", digestList=" ~ digestList.toString ~
                 '}';
     }
 

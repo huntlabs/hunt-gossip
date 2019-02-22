@@ -28,6 +28,7 @@ import hunt.gossip.model.GossipState;
 import hunt.gossip.model.HeartbeatState;
 import hunt.gossip.model.MessageType;
 import hunt.gossip.model.SeedMember;
+import hunt.gossip.core.GossipMessageFactory;
 
 // import java.net.UnknownHostException;
 import hunt.collection.ArrayList;
@@ -46,6 +47,10 @@ import hunt.gossip.util.JsonObject;
 import hunt.gossip.core.GossipSettings;
 import hunt.Integer;
 import hunt.util.Common;
+import hunt.gossip.core.Serializer;
+import hunt.util.DateTime;
+import std.conv;
+import hunt.Exceptions;
 
 public class GossipManager {
     // private static final Logger LOGGER = LoggerFactory.getLogger(GossipManager.class);
@@ -99,12 +104,11 @@ public class GossipManager {
         fireGossipEvent(localGossipMember, GossipState.JOIN);
     }
 
-    protected void start() {
-        logInfo(string.format("Starting gossip! cluster[%s] ip[%s] port[%d] id[%s]", localGossipMember.getCluster(), localGossipMember.getIpAddress(), localGossipMember.getPort(), localGossipMember.getId()
-        ));
+    public  void start() {
+        logInfo("Starting gossip! cluster[%s] ip[%s] port[%d] id[%s]", localGossipMember.getCluster(), localGossipMember.getIpAddress(), localGossipMember.getPort(), localGossipMember.getId());
         _isWorking = true;
-        settings.getMsgService().listen(getSelf().getIpAddress(), getSelf().getPort());
-        doGossipExecutor.scheduleAtFixedRate(new GossipTask(), settings.getGossipInterval(), settings.getGossipInterval(), TimeUnit.MILLISECONDS);
+        settings.getMsgService().listen(getSelf().getIpAddress(), getSelf().getPort().intValue);
+        doGossipExecutor.scheduleAtFixedRate(new GossipTask(), settings.getGossipInterval(), settings.getGossipInterval(), TimeUnit.Millisecond);
     }
 
     public List!(GossipMember) getLiveMembers() {
@@ -140,13 +144,18 @@ public class GossipManager {
     }
 
     private void randomGossipDigest(List!(GossipDigest) digests) /* throws UnknownHostException */ {
-        List!(GossipMember) endpoints = new ArrayList!(GossipMember)(endpointMembers.keySet());
-        Collections.shuffle(endpoints, random);
-        foreach(GossipMember ep ; endpoints) {
+        GossipMember[] gms;
+        foreach(GossipMember k , HeartbeatState v ; endpointMembers)
+        {
+            gms ~= k;
+        }
+        // List!(GossipMember) endpoints = new ArrayList!(GossipMember)(gms);
+        randomShuffle(gms);
+        foreach(GossipMember ep ; gms) {
             HeartbeatState hb = endpointMembers.get(ep);
             long hbTime = 0;
             long hbVersion = 0;
-            if (hb != null) {
+            if (hb !is null) {
                 hbTime = hb.getHeartbeatTime();
                 hbVersion = hb.getVersion();
             }
@@ -163,9 +172,9 @@ public class GossipManager {
             if (isDiscoverable(getSelf())) {
                 up(getSelf());
             }
-            if (LOGGER.isTraceEnabled()) {
+            version(HUNT_DEBUG) {
                 trace("sync data");
-                trace(string.format("Now my heartbeat version is %d", newversion));
+                trace("Now my heartbeat version is %d", newversion);
             }
 
             List!(GossipDigest) digests = new ArrayList!(GossipDigest)();
@@ -186,13 +195,13 @@ public class GossipManager {
 
                 }
                 checkStatus();
-                if (LOGGER.isTraceEnabled()) {
-                    trace("live member : " ~ getLiveMembers());
-                    trace("dead member : " ~ getDeadMembers());
-                    trace("endpoint : " ~ getEndpointMembers());
+                version(HUNT_DEBUG) {
+                    trace("live member : " ~ getLiveMembers().toString);
+                    trace("dead member : " ~ getDeadMembers().toString);
+                    trace("endpoint : " ~ getEndpointMembers().toString);
                 }
-            } catch (UnknownHostException e) {
-                logError(e.getMessage());
+            } catch (Throwable e) {
+                logError(e.msg);
             }
 
         }
@@ -200,11 +209,11 @@ public class GossipManager {
 
     private Buffer encodeSyncMessage(List!(GossipDigest) digests) {
         Buffer buffer = Buffer.buffer();
-        JsonArray array = new JsonArray();
+        JSONValue[] array ;
         foreach(GossipDigest e ; digests) {
-            array.add(Serializer.getInstance().encode(e).toString());
+            array ~= e.encode()/* JSONValue(Serializer.getInstance().encode!(GossipDigest)(e).toString()) */;
         }
-        buffer.appendString(GossipMessageFactory.getInstance().makeMessage(MessageType.SYNC_MESSAGE, array.encode(), getCluster(), getSelf().ipAndPort()).encode());
+        buffer.appendString(GossipMessageFactory.getInstance().makeMessage(MessageType.SYNC_MESSAGE, JSONValue(array).toString, getCluster(), getSelf().ipAndPort()).encode());
         return buffer;
     }
 
@@ -230,7 +239,12 @@ public class GossipManager {
     }
 
     public void apply2LocalState(Map!(GossipMember, HeartbeatState) endpointMembers) {
-        Set!(GossipMember) keys = endpointMembers.keySet();
+        GossipMember[] keys;
+        foreach(GossipMember k, HeartbeatState v; endpointMembers)
+        {
+            keys ~= k;
+        }
+        // Set!(GossipMember) keys = endpointMembers.keySet();
         foreach(GossipMember m ; keys) {
             if (getSelf().opEquals(m)) {
                 continue;
@@ -240,7 +254,7 @@ public class GossipManager {
                 HeartbeatState localState = getEndpointMembers().get(m);
                 HeartbeatState remoteState = endpointMembers.get(m);
 
-                if (localState != null) {
+                if (localState !is null) {
                     long localHeartbeatTime = localState.getHeartbeatTime();
                     long remoteHeartbeatTime = remoteState.getHeartbeatTime();
                     if (remoteHeartbeatTime > localHeartbeatTime) {
@@ -256,7 +270,7 @@ public class GossipManager {
                     remoteStateReplaceLocalState(m, remoteState);
                 }
             } catch (Exception e) {
-                logError(e.getMessage());
+                logError(e.msg);
             }
         }
     }
@@ -276,11 +290,16 @@ public class GossipManager {
 
     public GossipMember createByDigest(GossipDigest digest) {
         GossipMember member = new GossipMember();
-        member.setPort(digest.getEndpoint().getPort());
-        member.setIpAddress(digest.getEndpoint().getAddress().getHostAddress());
+        member.setPort(new Integer(digest.getEndpoint().getPort()));
+        member.setIpAddress(digest.getEndpoint().getIp());
         member.setCluster(cluster);
-
-        Set!(GossipMember) keys = getEndpointMembers().keySet();
+        GossipMember[] keys;
+        auto em = getEndpointMembers();
+        foreach(GossipMember k, HeartbeatState v; em)
+        {
+            keys ~= k;
+        }
+        // Set!(GossipMember) keys = getEndpointMembers().keySet();
         foreach(GossipMember m ; keys) {
             if (m.opEquals(member)) {
                 member.setId(m.getId());
@@ -303,7 +322,7 @@ public class GossipManager {
         if (liveSize <= 0) {
             return false;
         }
-        int index = (liveSize == 1) ? 0 : random.nextInt(liveSize);
+        int index = (liveSize == 1) ? 0 : uniform(0,liveSize);
         return sendGossip(buffer, liveMembers, index);
     }
 
@@ -317,7 +336,7 @@ public class GossipManager {
         if (deadSize <= 0) {
             return;
         }
-        int index = (deadSize == 1) ? 0 : random.nextInt(deadSize);
+        int index = (deadSize == 1) ? 0 : uniform(0,deadSize);
         sendGossip(buffer, deadMembers, index);
     }
 
@@ -327,12 +346,12 @@ public class GossipManager {
             if (size == 1 && settings.getSeedMembers().contains(gossipMember2SeedMember(getSelf()))) {
                 return;
             }
-            int index = (size == 1) ? 0 : random.nextInt(size);
+            int index = (size == 1) ? 0 : uniform(0,size);
             if (liveMembers.size() == 1) {
                 sendGossip2Seed(buffer, settings.getSeedMembers(), index);
             } else {
-                double prob = size / Double.valueOf(liveMembers.size());
-                if (random.nextDouble() < prob) {
+                double prob = size / /* Double.valueOf */(liveMembers.size())*1.0;
+                if (uniform(0.0f, 1.0f) < prob) {
                     sendGossip2Seed(buffer, settings.getSeedMembers(), index);
                 }
             }
@@ -340,7 +359,7 @@ public class GossipManager {
     }
 
     private bool sendGossip(Buffer buffer, List!(GossipMember) members, int index) {
-        if (buffer != null && index >= 0) {
+        if (buffer !is null && index >= 0) {
             try {
                 GossipMember target = members.get(index);
                 if (target.opEquals(getSelf())) {
@@ -354,14 +373,14 @@ public class GossipManager {
                 settings.getMsgService().sendMsg(target.getIpAddress(), target.getPort(), buffer);
                 return settings.getSeedMembers().contains(gossipMember2SeedMember(target));
             } catch (Exception e) {
-                logError(e.getMessage());
+                logError(e.msg);
             }
         }
         return false;
     }
 
     private bool sendGossip2Seed(Buffer buffer, List!(SeedMember) members, int index) {
-        if (buffer != null && index >= 0) {
+        if (buffer !is null && index >= 0) {
             try {
                 SeedMember target = members.get(index);
                 int m_size = members.size();
@@ -375,7 +394,7 @@ public class GossipManager {
                 settings.getMsgService().sendMsg(target.getIpAddress(), target.getPort(), buffer);
                 return true;
             } catch (Exception e) {
-                logError(e.getMessage());
+                logError(e.msg);
             }
         }
         return false;
@@ -390,14 +409,19 @@ public class GossipManager {
         try {
             GossipMember local = getSelf();
             Map!(GossipMember, HeartbeatState) endpoints = getEndpointMembers();
-            Set!(GossipMember) epKeys = endpoints.keySet();
-            foreach(GossipMember k ; epKeys) {
+            GossipMember[] gms;
+            foreach(GossipMember k, HeartbeatState v; endpoints)
+            {
+                gms ~= k;
+            }
+            // Set!(GossipMember) epKeys = endpoints.keySet();
+            foreach(GossipMember k ; gms) {
                 if (!k.opEquals(local)) {
                     HeartbeatState state = endpoints.get(k);
-                    long now = System.currentTimeMillis();
+                    long now = DateTimeHelper.currentTimeMillis();
                     long duration = now - state.getHeartbeatTime();
                     long convictedTime = convictedTime();
-                    logInfo("check : " ~ k.toString() ~ " state : " ~ state.toString() ~ " duration : " ~ duration ~ " convictedTime : " ~ convictedTime);
+                    logInfo("check : " ~ k.toString() ~ " state : " ~ state.toString() ~ " duration : " ~ duration.to!string ~ " convictedTime : " ~ convictedTime.to!string);
                     if (duration > convictedTime && (isAlive(k) || getLiveMembers().contains(k))) {
                         downing(k, state);
                     }
@@ -408,13 +432,14 @@ public class GossipManager {
             }
             checkCandidate();
         } catch (Exception e) {
-            logError(e.getMessage());
+            logError(e.msg);
         }
     }
 
     private int convergenceCount() {
         int size = getEndpointMembers().size();
-        int count = cast(int) Math.floor(Math.log10(size) + Math.log(size) + 1);
+        import std.math;
+        int count = cast(int) floor(log10(size) + log(size) + 1);
         return count;
     }
 
@@ -435,7 +460,7 @@ public class GossipManager {
     }
 
     private void fireGossipEvent(GossipMember member, GossipState state) {
-        if (getListener() != null) {
+        if (getListener() !is null) {
             getListener().gossipEvent(member, state);
         }
     }
@@ -461,7 +486,7 @@ public class GossipManager {
 //            clearExecutor.schedule(() -> clearMember(member), getSettings().getDeleteThreshold() * getSettings().getGossipInterval(), TimeUnit.MILLISECONDS);
             fireGossipEvent(member, GossipState.DOWN);
         } catch (Exception e) {
-            logError(e.getMessage());
+            logError(e.msg);
         } finally {
             rwlock.writer.unlock();
         }
@@ -486,7 +511,7 @@ public class GossipManager {
             }
            
         } catch (Exception e) {
-            logError(e.getMessage());
+            logError(e.msg);
         } finally {
             rwlock.writer.unlock();
         }
@@ -507,14 +532,19 @@ public class GossipManager {
                 candidateMembers.put(member, new CandidateMemberState(state.getHeartbeatTime()));
             }
         } catch (Exception e) {
-            logError(e.getMessage());
+            logError(e.msg);
         }
     }
 
     private void checkCandidate() {
-        Set!(GossipMember) keys = candidateMembers.keySet();
+        GossipMember[] keys;
+        foreach(GossipMember k, CandidateMemberState v; candidateMembers)
+        {
+            keys ~= k;
+        }
+        // Set!(GossipMember) keys = candidateMembers.keySet();
         foreach(GossipMember m ; keys) {
-            if (candidateMembers.get(m).getDowningCount().get() >= convergenceCount()) {
+            if (candidateMembers.get(m).getDowningCount() >= convergenceCount()) {
                 down(m);
                 candidateMembers.remove(m);
             }
@@ -522,11 +552,12 @@ public class GossipManager {
     }
 
 
-    protected void shutdown() {
+    public void shutdown() {
         getSettings().getMsgService().unListen();
         doGossipExecutor.shutdown();
         try {
-            Thread.sleep(getSettings().getGossipInterval());
+            import core.thread;
+            Thread.sleep(dur!("msecs")(getSettings().getGossipInterval()));
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

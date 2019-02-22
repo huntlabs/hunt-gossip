@@ -40,7 +40,7 @@ public class GossipMessageFactory {
 
     public JsonObject makeMessage(MessageType type, string data, string cluster, string from) {
         JsonObject bj = new JsonObject();
-        bj.put(KEY_MSG_TYPE, type);
+        bj.put(KEY_MSG_TYPE, type.type());
         bj.put(KEY_CLUSTER, cluster);
         bj.put(KEY_DATA, data);
         bj.put(KEY_FROM, from);

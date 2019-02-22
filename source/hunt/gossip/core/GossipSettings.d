@@ -17,6 +17,7 @@ module hunt.gossip.core.GossipSettings;
 import hunt.gossip.model.SeedMember;
 import hunt.gossip.net.MsgService;
 import hunt.gossip.net.udp.UDPMsgService;
+import hunt.gossip.core.GossipManager;
 
 import hunt.collection.ArrayList;
 import hunt.collection.List;
@@ -65,8 +66,10 @@ public class GossipSettings {
 
      public void setSeedMembers(List!(SeedMember) seedMembers) {
         List!(SeedMember) _seedMembers = new ArrayList!(SeedMember)();
-        if(seedMembers != null && !seedMembers.isEmpty()){
+        if(seedMembers !is null && !seedMembers.isEmpty()){
             foreach(SeedMember seed ;seedMembers){
+                import hunt.text.Common;
+
                 if(!seed.eigenvalue().equalsIgnoreCase(GossipManager.getInstance().getSelf().eigenvalue())){
                     if(!_seedMembers.contains(seed)){
                         _seedMembers.add(seed);

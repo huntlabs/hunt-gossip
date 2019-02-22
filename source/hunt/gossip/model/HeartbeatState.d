@@ -16,7 +16,8 @@ module hunt.gossip.model.HeartbeatState;
 
 
 import hunt.gossip.core.VersionHelper;
-
+import hunt.util.DateTime;
+import std.conv;
 
 public class HeartbeatState {
     private long heartbeatTime;
@@ -39,12 +40,12 @@ public class HeartbeatState {
     }
 
     public this() {
-        this.heartbeatTime = System.currentTimeMillis();
+        this.heartbeatTime = DateTimeHelper.currentTimeMillis();
         this._version = VersionHelper.getInstance().nextVersion();
     }
 
     public long updateVersion() {
-        setHeartbeatTime(System.currentTimeMillis());
+        setHeartbeatTime(DateTimeHelper.currentTimeMillis());
         this._version = VersionHelper.getInstance().nextVersion();
         return _version;
     }
@@ -52,8 +53,8 @@ public class HeartbeatState {
     override
     public string toString() {
         return "HeartbeatState{" ~
-                "heartbeatTime=" ~ heartbeatTime ~
-                ", _version=" ~ _version ~
+                "heartbeatTime=" ~ heartbeatTime.to!string ~
+                ", _version=" ~ _version.to!string ~
                 '}';
     }
 }

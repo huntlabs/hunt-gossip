@@ -34,7 +34,7 @@ import hunt.gossip.net.MsgService;
 import hunt.gossip.util.JsonObject;
 import hunt.gossip.util.Common;
 import hunt.Integer;
-
+import hunt.logging;
 import hunt.event;
 import hunt.io.UdpSocket : UdpSocket;
 import std.socket;
@@ -42,17 +42,18 @@ import std.functional;
 import std.exception;
 import core.thread;
 import core.time;
+import std.stdio;
 
 public class UDPMsgService : MsgService
 {
-    DatagramSocket socket;
+    // DatagramSocket socket;
     EventLoop _loop;
     UdpSocket _udpSocket;
 
     this()
     {
         _loop = new EventLoop();
-        _udpSocket = new UdpSocket(loop);
+        _udpSocket = new UdpSocket(_loop);
     }
 
     override public void listen(string ipAddress, int port)
@@ -66,7 +67,7 @@ public class UDPMsgService : MsgService
         //     }
         // });
 
-        _udpSocket.bind(ipAddress, port).setReadData((in ubyte[] data, Address addr) {
+        _udpSocket.bind(ipAddress, cast(ushort)port).setReadData((in ubyte[] data, Address addr) {
             debug writefln("Server => client: %s, received: %s", addr, cast(string) data);
             handleMsg(Buffer.buffer().appendString(cast(string) data));
         }).start();
@@ -81,26 +82,26 @@ public class UDPMsgService : MsgService
         string _data = j.getString(GossipMessageFactory.KEY_DATA);
         string cluster = j.getString(GossipMessageFactory.KEY_CLUSTER);
         string from = j.getString(GossipMessageFactory.KEY_FROM);
-        if (isNullOrEmpty(cluster) || !GossipManager.getInstance().getCluster().opEquals(cluster))
+        if (isNullOrEmpty(cluster) || !(GossipManager.getInstance().getCluster() == cluster))
         {
             logError("This message shouldn't exist my world!" ~ data.toString());
             return;
         }
         MessageHandler handler = null;
-        MessageType type = MessageType.valueOf(msgType);
-        if (type == MessageType.SYNC_MESSAGE)
+        MessageType type = MessageType(msgType);
+        if (type.type() == MessageType.SYNC_MESSAGE.type())
         {
             handler = new SyncMessageHandler();
         }
-        else if (type == MessageType.ACK_MESSAGE)
+        else if (type.type() == MessageType.ACK_MESSAGE.type())
         {
             handler = new AckMessageHandler();
         }
-        else if (type == MessageType.ACK2_MESSAGE)
+        else if (type.type() == MessageType.ACK2_MESSAGE.type())
         {
             handler = new Ack2MessageHandler();
         }
-        else if (type == MessageType.SHUTDOWN)
+        else if (type.type() == MessageType.SHUTDOWN.type())
         {
             handler = new ShutdownMessageHandler();
         }
@@ -108,7 +109,7 @@ public class UDPMsgService : MsgService
         {
             logError("Not supported message type");
         }
-        if (handler != null)
+        if (handler !is null)
         {
             handler.handle(cluster, _data, from);
         }
@@ -116,23 +117,23 @@ public class UDPMsgService : MsgService
 
     override public void sendMsg(string targetIp, Integer targetPort, Buffer data)
     {
-        if (targetIp != null && targetPort != null && data != null)
+        if (targetIp !is null && targetPort !is null && data !is null)
         {
             // socket.send(data, targetPort, targetIp, asyncResult -> {
             // });
-            _udpSocket.sendTo(data.data(), new InternetAddress(targetIp,targetPort.intValue));
+            _udpSocket.sendTo(data.data(), new InternetAddress(targetIp,cast(ushort)(targetPort.intValue)));
         }
     }
 
     override public void unListen()
     {
-        if (socket != null)
+        if (_udpSocket !is null)
         {
             // socket.close(asyncResult -> {
             //     if (asyncResult.succeeded()) {
             //         logInfo("Socket was close!");
             //     } else {
-            //         logError("Close socket an error has occurred. " ~ asyncResult.cause().getMessage());
+            //         logError("Close socket an error has occurred. " ~ asyncResult.cause().msg);
             //     }
             // });
             _udpSocket.close();

@@ -17,10 +17,11 @@ module hunt.gossip.model.CandidateMemberState;
 // import hunt.concurrency.atomic.AtomicInteger;
 
 import core.atomic;
+import std.conv;
 
 public class CandidateMemberState {
-    private long heartbeatTime;
-    private int downingCount;
+    private  long heartbeatTime;
+    private shared int downingCount;
 
     public this(long heartbeatTime) {
         this.heartbeatTime = heartbeatTime;
@@ -41,7 +42,7 @@ public class CandidateMemberState {
     }
 
     public int getDowningCount() {
-        return automicLoad(downingCount);
+        return atomicLoad(downingCount);
     }
 
     public void setDowningCount(int downingCount) {
@@ -53,8 +54,8 @@ public class CandidateMemberState {
     override
     public string toString() {
         return "CandidateMemberState{" ~
-                "heartbeatTime=" ~ heartbeatTime ~
-                ", downingCount=" ~ downingCount.get() ~
+                "heartbeatTime=" ~ heartbeatTime.to!string ~
+                ", downingCount=" ~ downingCount.to!string ~
                 '}';
     }
 }

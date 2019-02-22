@@ -18,14 +18,14 @@ module hunt.gossip.core.VersionHelper;
 import core.atomic;
 
 public class VersionHelper {
-    private static long v;
+    private shared static long v =0L;
     private static VersionHelper ourInstance;
-    static this()
-    {
-        atomicStore(VersionHelper.v,0L);
-        ourInstance = new VersionHelper();
-    }
+ 
     public static VersionHelper getInstance() {
+        if(ourInstance is null)
+        {
+            ourInstance = new VersionHelper();
+        }
         return ourInstance;
     }
 
@@ -33,6 +33,6 @@ public class VersionHelper {
     }
 
     public long nextVersion() {
-        return v.incrementAndGet();
+        return atomicOp!"+="(VersionHelper.v,1L);
     }
 }

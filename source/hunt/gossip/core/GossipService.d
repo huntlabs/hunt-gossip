@@ -24,6 +24,8 @@ import hunt.gossip.util.Common;
 import hunt.Integer;
 import hunt.gossip.core.GossipSettings;
 import hunt.gossip.core.GossipManager;
+import std.conv;
+import hunt.Exceptions;
 
 public class GossipService {
     // private static final Logger LOGGER = LoggerFactory.getLogger(GossipService.class);
@@ -31,7 +33,7 @@ public class GossipService {
     public this(string cluster, string ipAddress, Integer port, string id, List!(SeedMember) seedMembers, GossipSettings settings, GossipListener listener) /* throws Exception */ {
         checkParams(cluster, ipAddress, port, seedMembers);
         if (isNullOrEmpty(id)) {
-            id = ipAddress.concat(":").concat(string.valueOf(port));
+            id = ipAddress ~ (":") ~ (to!string(port));
         }
         GossipManager.getInstance().init(cluster, ipAddress, port, id, seedMembers, settings, listener);
     }
@@ -61,13 +63,13 @@ public class GossipService {
             who = "cluster";
         } else if (isNullOrEmpty(ipAddress)) {
             who = "ip";
-        } else if (isNullOrEmpty(string.valueOf(port))) {
+        } else if (isNullOrEmpty(to!string(port))) {
             who = "port";
-        } else if (seedMembers == null || seedMembers.isEmpty()) {
+        } else if (seedMembers is null || seedMembers.isEmpty()) {
             who = "seed member";
         }
-        if (who != null) {
-            throw new IllegalArgumentException(string.format(f, who));
+        if (who !is null) {
+            throw new IllegalArgumentException(f, who);
         }
     }
 }

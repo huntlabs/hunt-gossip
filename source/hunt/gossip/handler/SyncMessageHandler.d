@@ -15,7 +15,6 @@
 module hunt.gossip.handler.SyncMessageHandler;
 
 import hunt.gossip.util.Buffer;
-// import io.vertx.core.json.JsonArray;
 import hunt.gossip.core.GossipManager;
 import hunt.gossip.core.Serializer;
 import hunt.gossip.model.AckMessage;
@@ -28,23 +27,26 @@ import hunt.collection.HashMap;
 import hunt.collection.List;
 import hunt.collection.Map;
 import hunt.collection.Set;
-
+import std.json;
+import hunt.Integer;
+import std.array;
+import hunt.logging;
 
 public class SyncMessageHandler : MessageHandler {
     override
     public void handle(string cluster, string data, string from) {
-        if (data != null) {
+        if (data !is null) {
             try {
-                JsonArray array = new JsonArray(data);
+                JSONValue array = parseJSON(data);
                 List!(GossipDigest) olders = new ArrayList!(GossipDigest)();
                 Map!(GossipMember, HeartbeatState) newers = new HashMap!(GossipMember, HeartbeatState)();
                 List!(GossipMember) gMemberList = new ArrayList!(GossipMember)();
-                foreach(Object e ; array) {
-                    GossipDigest g = Serializer.getInstance().decode!(GossipDigest)(Buffer.buffer().appendString(e.toString()));
+                foreach(JSONValue e ; array.array) {
+                    GossipDigest g = GossipDigest.decode(e)/* Serializer.getInstance().decode!(GossipDigest)(Buffer.buffer().appendString(e.toString())) */;
                     GossipMember member = new GossipMember();
                     member.setCluster(cluster);
-                    member.setIpAddress(g.getEndpoint().getAddress().getHostAddress());
-                    member.setPort(g.getEndpoint().getPort());
+                    member.setIpAddress(g.getEndpoint().getIp());
+                    member.setPort(new Integer(g.getEndpoint().getPort()));
                     member.setId(g.getId());
                     gMemberList.add(member);
 
@@ -52,7 +54,11 @@ public class SyncMessageHandler : MessageHandler {
                 }
                 // I have, you don't have
                 Map!(GossipMember, HeartbeatState) endpoints = GossipManager.getInstance().getEndpointMembers();
-                Set!(GossipMember) epKeys = endpoints.keySet();
+                GossipMember[] epKeys;
+                foreach(GossipMember k, HeartbeatState v; endpoints) {
+                    epKeys ~= k;
+                }
+                // Set!(GossipMember) epKeys = endpoints.keySet();
                 foreach(GossipMember m ; epKeys) {
                     if (!gMemberList.contains(m)) {
                         newers.put(m, endpoints.get(m));
@@ -63,12 +69,12 @@ public class SyncMessageHandler : MessageHandler {
                 }
                 AckMessage ackMessage = new AckMessage(olders, newers);
                 Buffer ackBuffer = GossipManager.getInstance().encodeAckMessage(ackMessage);
-                if (from != null) {
+                if (from !is null) {
                     string[] host = from.split(":");
                     GossipManager.getInstance().getSettings().getMsgService().sendMsg(host[0], Integer.valueOf(host[1]), ackBuffer);
                 }
-            } catch (NumberFormatException e) {
-                logError(e.getMessage());
+            } catch (Throwable e) {
+                logError(e.msg);
             }
         }
     }
@@ -79,7 +85,7 @@ public class SyncMessageHandler : MessageHandler {
             HeartbeatState hb = GossipManager.getInstance().getEndpointMembers().get(member);
             long remoteHeartbeatTime = g.getHeartbeatTime();
             long remoteVersion = g.getVersion();
-            if (hb != null) {
+            if (hb !is null) {
                 long localHeartbeatTime = hb.getHeartbeatTime();
                 long localVersion = hb.getVersion();
 
@@ -98,7 +104,7 @@ public class SyncMessageHandler : MessageHandler {
                 olders.add(g);
             }
         } catch (Exception e) {
-            logError(e.getMessage());
+            logError(e.msg);
         }
     }
 }

@@ -26,7 +26,7 @@ public class ShutdownMessageHandler : MessageHandler {
     public void handle(string cluster, string data, string from) {
         JsonObject dj = new JsonObject(data);
         GossipMember whoShutdown = dj.mapTo!(GossipMember)();
-        if (whoShutdown != null) {
+        if (whoShutdown !is null) {
             GossipManager.getInstance().down(whoShutdown);
         }
     }

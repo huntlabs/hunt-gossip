@@ -43,11 +43,11 @@ public class AckMessageHandler : MessageHandler {
         }
 
         Map!(GossipMember, HeartbeatState) deltaEndpoints = new HashMap!(GossipMember, HeartbeatState)();
-        if (olders != null) {
+        if (olders !is null) {
             foreach(GossipDigest d ; olders) {
                 GossipMember member = GossipManager.getInstance().createByDigest(d);
                 HeartbeatState hb = GossipManager.getInstance().getEndpointMembers().get(member);
-                if (hb != null) {
+                if (hb !is null) {
                     deltaEndpoints.put(member, hb);
                 }
             }
@@ -56,8 +56,10 @@ public class AckMessageHandler : MessageHandler {
         if (!deltaEndpoints.isEmpty()) {
             Ack2Message ack2Message = new Ack2Message(deltaEndpoints);
             Buffer ack2Buffer = GossipManager.getInstance().encodeAck2Message(ack2Message);
-            if (from != null) {
+            if (from !is null) {
+                import std.array;
                 string[] host = from.split(":");
+                import hunt.Integer;
                 GossipManager.getInstance().getSettings().getMsgService().sendMsg(host[0], Integer.valueOf(host[1]), ack2Buffer);
             }
         }

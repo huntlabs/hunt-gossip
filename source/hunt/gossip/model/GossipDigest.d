@@ -18,6 +18,8 @@ import hunt.io.Common;
 import hunt.util.Common;
 import hunt.gossip.util.Common;
 import hunt.gossip.model.GossipMember;
+import std.conv;
+import std.json;
 
 public class GossipDigest : Serializable, Comparable!(GossipDigest) {
     private InetSocketAddress endpoint;
@@ -37,7 +39,7 @@ public class GossipDigest : Serializable, Comparable!(GossipDigest) {
     }
 
     public this(GossipMember endpoint, long heartbeatTime, long _version) /* throws UnknownHostException */ {
-        this.endpoint = new InetSocketAddress(endpoint.getIpAddress(), endpoint.getPort());
+        this.endpoint = new InetSocketAddress(endpoint.getIpAddress(), endpoint.getPort().intValue());
         this.heartbeatTime = heartbeatTime;
         this._version = _version;
         this.id = endpoint.getId();
@@ -79,8 +81,36 @@ public class GossipDigest : Serializable, Comparable!(GossipDigest) {
     public string toString() {
         return "GossipDigest{" ~
                 "endpoint=" ~ endpoint.toString() ~
-                ", heartbeatTime=" ~ heartbeatTime ~
-                ", _version=" ~ _version ~
+                ", heartbeatTime=" ~ heartbeatTime.to!string ~
+                ", _version=" ~ _version.to!string ~
                 '}';
+    }
+
+    public JSONValue encode()
+    {
+        JSONValue data;
+        data["heartbeatTime"] = heartbeatTime;
+        data["version"] = _version;
+        data["id"] = id;
+        JSONValue endpoint;
+        endpoint["ip"] = this.endpoint.getIp();
+        endpoint["port"] = this.endpoint.getPort();
+        data["endpoint"] = endpoint;
+        return data;
+    }
+
+    public static GossipDigest decode(JSONValue data)
+    {
+        try
+        {
+            GossipDigest gd = new GossipDigest();
+            gd.setHeartbeatTime(data["heartbeatTime"].integer);
+            gd.setVersion(data["version"].integer);
+            gd.setId(data["id"].str);
+            gd.setEndpoint(new InetSocketAddress(data["ip"].str,cast(int)(data["port"].integer)));
+            return gd;
+        }catch(Exception e)
+        {}
+        return null;
     }
 }

@@ -19,9 +19,13 @@ module hunt.gossip.model.AckMessage;
 import hunt.gossip.core.CustomDeserializer;
 import hunt.gossip.core.CustomSerializer;
 
-import java.io.Serializable;
+import hunt.io.Common;
 import hunt.collection.List;
 import hunt.collection.Map;
+import hunt.gossip.model.GossipDigest;
+import hunt.gossip.model.GossipMember;
+import hunt.gossip.model.HeartbeatState;
+
 
 
 public class AckMessage : Serializable {
@@ -31,10 +35,10 @@ public class AckMessage : Serializable {
     // @JsonDeserialize(keyUsing = CustomDeserializer.class)
     private Map!(GossipMember, HeartbeatState) newers;
 
-    public AckMessage() {
+    public this() {
     }
 
-    public AckMessage(List!(GossipDigest) olders, Map!(GossipMember, HeartbeatState) newers) {
+    public this(List!(GossipDigest) olders, Map!(GossipMember, HeartbeatState) newers) {
         this.olders = olders;
         this.newers = newers;
     }

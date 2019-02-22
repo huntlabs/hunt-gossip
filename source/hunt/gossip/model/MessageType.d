@@ -15,12 +15,15 @@
 module hunt.gossip.model.MessageType;
 
 
-public enum MessageType {
-    SYNC_MESSAGE("sync_message"), ACK_MESSAGE("ack_message"), ACK2_MESSAGE("ack2_message"), SHUTDOWN("shutdown");
+public struct MessageType {
+    enum MessageType SYNC_MESSAGE = MessageType("sync_message");
+    enum MessageType ACK_MESSAGE = MessageType("ack_message");
+    enum MessageType ACK2_MESSAGE = MessageType("ack2_message");
+    enum MessageType SHUTDOWN = MessageType("shutdown");
 
-    private final string type;
+    private  string type;
 
-    MessageType(string type) {
+    this(string type) {
         this.type = type;
     }
 }

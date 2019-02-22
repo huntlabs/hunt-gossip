@@ -14,11 +14,10 @@
 
 module hunt.gossip.model.GossipDigest;
 
-import java.io.Serializable;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
-
+import hunt.io.Common;
+import hunt.util.Common;
+import hunt.gossip.util.Common;
+import hunt.gossip.model.GossipMember;
 
 public class GossipDigest : Serializable, Comparable!(GossipDigest) {
     private InetSocketAddress endpoint;
@@ -26,7 +25,7 @@ public class GossipDigest : Serializable, Comparable!(GossipDigest) {
     private long _version;
     private string id;
 
-    override
+    // override
     public int compareTo(GossipDigest o) {
         if (heartbeatTime != o.heartbeatTime) {
             return cast(int) (heartbeatTime - o.heartbeatTime);
@@ -34,11 +33,11 @@ public class GossipDigest : Serializable, Comparable!(GossipDigest) {
         return cast(int) (_version - o._version);
     }
 
-    public GossipDigest() {
+    public this() {
     }
 
-    public GossipDigest(GossipMember endpoint, long heartbeatTime, long _version) throws UnknownHostException {
-        this.endpoint = new InetSocketAddress(InetAddress.getByName(endpoint.getIpAddress()), endpoint.getPort());
+    public this(GossipMember endpoint, long heartbeatTime, long _version) /* throws UnknownHostException */ {
+        this.endpoint = new InetSocketAddress(endpoint.getIpAddress(), endpoint.getPort());
         this.heartbeatTime = heartbeatTime;
         this._version = _version;
         this.id = endpoint.getId();

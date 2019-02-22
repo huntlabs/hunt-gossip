@@ -9,9 +9,10 @@ import std.exception;
 import std.conv;
 import std.string;
 import std.uni;
+import std.json;
+import hunt.gossip.util.JsonObject;
 
-/**
-*/
+
 class Buffer : Appendable {
     private Appender!(byte[]) _buffer;
 
@@ -158,4 +159,21 @@ class Buffer : Appendable {
     {
         return _buffer.data.dup;
     }
+
+    public JsonObject toJsonObject()
+    {
+        try{
+            return new JsonObject(parseJSON(cast(string)data()));
+        }
+        catch(Exception e)
+        {
+        }
+        return null;
+    }
+
+    public Buffer appendString(string str)
+    {
+        return append(str);
+    }
+
 }

@@ -15,12 +15,14 @@
 module hunt.gossip.model.GossipState;
 
 
-public enum GossipState {
-    UP("up"), DOWN("down"), JOIN("join");
+public struct GossipState {
+    enum GossipState UP = GossipState("up");
+    enum GossipState DOWN = GossipState("down");
+    enum GossipState JOIN = GossipState("join");
 
-    private final string state;
+    private  string state;
 
-    GossipState(string state) {
+    this(string state) {
         this.state = state;
     }
 

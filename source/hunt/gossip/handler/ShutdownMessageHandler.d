@@ -14,16 +14,18 @@
 
 module hunt.gossip.handler.ShutdownMessageHandler;
 
-import io.vertx.core.json.JsonObject;
+import std.json;
 import hunt.gossip.core.GossipManager;
 import hunt.gossip.model.GossipMember;
+import hunt.gossip.util.JsonObject;
+import hunt.gossip.handler.MessageHandler;
 
 
 public class ShutdownMessageHandler : MessageHandler {
     override
     public void handle(string cluster, string data, string from) {
         JsonObject dj = new JsonObject(data);
-        GossipMember whoShutdown = dj.mapTo(GossipMember.class);
+        GossipMember whoShutdown = dj.mapTo!(GossipMember)();
         if (whoShutdown != null) {
             GossipManager.getInstance().down(whoShutdown);
         }

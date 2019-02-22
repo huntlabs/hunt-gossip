@@ -15,19 +15,23 @@
 module hunt.gossip.core.Serializer;
 
 import hunt.gossip.util.Buffer;
-import io.vertx.core.json.JsonObject;
+import std.json;
 
-import java.io.Serializable;
+import hunt.io.Common;
+import hunt.gossip.util.JsonObject;
 
 
 public class Serializer {
-    private static Serializer ourInstance = new Serializer();
-
+    private static Serializer ourInstance ;
     public static Serializer getInstance() {
+        if(ourInstance is null)
+        {
+            ourInstance = new Serializer();
+        }
         return ourInstance;
     }
 
-    private Serializer() {
+    private this() {
     }
 
     public Buffer encode(Serializable obj) {
@@ -40,11 +44,11 @@ public class Serializer {
         return buffer;
     }
 
-    public <T> T decode(Buffer buffer, Class!(T) typeReference) {
+    public T decode(T)(Buffer buffer) {
         T gdsm = null;
         if (buffer != null) {
             try {
-                gdsm = buffer.toJsonObject().mapTo(typeReference);
+                gdsm = buffer.toJsonObject().mapTo!(T)();
             } catch (Exception e) {
                 e.printStackTrace();
             }

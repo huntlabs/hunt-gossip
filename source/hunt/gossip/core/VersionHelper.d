@@ -14,18 +14,22 @@
 
 module hunt.gossip.core.VersionHelper;
 
-import hunt.concurrency.atomic.AtomicLong;
-
+// import hunt.concurrency.atomic.AtomicLong;
+import core.atomic;
 
 public class VersionHelper {
-    private static AtomicLong v = new AtomicLong(0);
-    private static VersionHelper ourInstance = new VersionHelper();
-
+    private static long v;
+    private static VersionHelper ourInstance;
+    static this()
+    {
+        atomicStore(VersionHelper.v,0L);
+        ourInstance = new VersionHelper();
+    }
     public static VersionHelper getInstance() {
         return ourInstance;
     }
 
-    private VersionHelper() {
+    private this() {
     }
 
     public long nextVersion() {

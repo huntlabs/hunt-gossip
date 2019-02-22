@@ -15,16 +15,16 @@
 module hunt.gossip.handler.SyncMessageHandler;
 
 import hunt.gossip.util.Buffer;
-import io.vertx.core.json.JsonArray;
+// import io.vertx.core.json.JsonArray;
 import hunt.gossip.core.GossipManager;
 import hunt.gossip.core.Serializer;
 import hunt.gossip.model.AckMessage;
 import hunt.gossip.model.GossipDigest;
 import hunt.gossip.model.GossipMember;
 import hunt.gossip.model.HeartbeatState;
-
+import hunt.gossip.handler.MessageHandler;
 import hunt.collection.ArrayList;
-import java.util.HashMap;
+import hunt.collection.HashMap;
 import hunt.collection.List;
 import hunt.collection.Map;
 import hunt.collection.Set;
@@ -36,11 +36,11 @@ public class SyncMessageHandler : MessageHandler {
         if (data != null) {
             try {
                 JsonArray array = new JsonArray(data);
-                List!(GossipDigest) olders = new ArrayList<>();
-                Map!(GossipMember, HeartbeatState) newers = new HashMap<>();
-                List!(GossipMember) gMemberList = new ArrayList<>();
+                List!(GossipDigest) olders = new ArrayList!(GossipDigest)();
+                Map!(GossipMember, HeartbeatState) newers = new HashMap!(GossipMember, HeartbeatState)();
+                List!(GossipMember) gMemberList = new ArrayList!(GossipMember)();
                 foreach(Object e ; array) {
-                    GossipDigest g = Serializer.getInstance().decode(Buffer.buffer().appendString(e.toString()), GossipDigest.class);
+                    GossipDigest g = Serializer.getInstance().decode!(GossipDigest)(Buffer.buffer().appendString(e.toString()));
                     GossipMember member = new GossipMember();
                     member.setCluster(cluster);
                     member.setIpAddress(g.getEndpoint().getAddress().getHostAddress());
@@ -57,7 +57,7 @@ public class SyncMessageHandler : MessageHandler {
                     if (!gMemberList.contains(m)) {
                         newers.put(m, endpoints.get(m));
                     }
-                    if (m.equals(GossipManager.getInstance().getSelf())) {
+                    if (m.opEquals(GossipManager.getInstance().getSelf())) {
                         newers.put(m, endpoints.get(m));
                     }
                 }

@@ -14,22 +14,28 @@
 
 module hunt.gossip.core.GossipMessageFactory;
 
-import io.vertx.core.json.JsonObject;
+import std.json;
 import hunt.gossip.model.MessageType;
+import hunt.gossip.util.JsonObject;
 
 
 public class GossipMessageFactory {
-    private static GossipMessageFactory ourInstance = new GossipMessageFactory();
-    public static final string KEY_MSG_TYPE = "msgtype";
-    public static final string KEY_DATA = "data";
-    public static final string KEY_CLUSTER = "cluster";
-    public static final string KEY_FROM = "from";
+    private static GossipMessageFactory ourInstance ;
+    public enum string KEY_MSG_TYPE = "msgtype";
+    public enum string KEY_DATA = "data";
+    public enum string KEY_CLUSTER = "cluster";
+    public enum string KEY_FROM = "from";
+
+    shared static this()
+    {
+        GossipMessageFactory.ourInstance = new GossipMessageFactory();
+    }
 
     public static GossipMessageFactory getInstance() {
         return ourInstance;
     }
 
-    private GossipMessageFactory() {
+    private this() {
     }
 
     public JsonObject makeMessage(MessageType type, string data, string cluster, string from) {

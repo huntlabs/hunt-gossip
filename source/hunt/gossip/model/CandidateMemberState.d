@@ -14,22 +14,22 @@
 
 module hunt.gossip.model.CandidateMemberState;
 
-import hunt.concurrency.atomic.AtomicInteger;
+// import hunt.concurrency.atomic.AtomicInteger;
 
-/**
- * Created by lvsq on 8/19/2017.
- */
+import core.atomic;
+
 public class CandidateMemberState {
     private long heartbeatTime;
-    private AtomicInteger downingCount;
+    private int downingCount;
 
-    public CandidateMemberState(long heartbeatTime) {
+    public this(long heartbeatTime) {
         this.heartbeatTime = heartbeatTime;
-        this.downingCount = new AtomicInteger(0);
+         atomicStore(this.downingCount,0);
     }
 
     public void updateCount() {
-        this.downingCount.incrementAndGet();
+        // this.downingCount.incrementAndGet();
+        atomicOp!"+="(this.downingCount,1);
     }
 
     public long getHeartbeatTime() {
@@ -40,12 +40,14 @@ public class CandidateMemberState {
         this.heartbeatTime = heartbeatTime;
     }
 
-    public AtomicInteger getDowningCount() {
-        return downingCount;
+    public int getDowningCount() {
+        return automicLoad(downingCount);
     }
 
-    public void setDowningCount(AtomicInteger downingCount) {
-        this.downingCount = downingCount;
+    public void setDowningCount(int downingCount) {
+        // this.downingCount = downingCount;
+         atomicStore(this.downingCount,downingCount);
+
     }
 
     override

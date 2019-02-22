@@ -15,23 +15,24 @@
 module hunt.gossip.handler.AckMessageHandler;
 
 import hunt.gossip.util.Buffer;
-import io.vertx.core.json.JsonObject;
+import std.json;
 import hunt.gossip.core.GossipManager;
 import hunt.gossip.model.Ack2Message;
 import hunt.gossip.model.AckMessage;
 import hunt.gossip.model.GossipDigest;
 import hunt.gossip.model.GossipMember;
 import hunt.gossip.model.HeartbeatState;
-
-import java.util.HashMap;
+import hunt.gossip.handler.MessageHandler;
+import hunt.collection.HashMap;
 import hunt.collection.List;
 import hunt.collection.Map;
+import hunt.gossip.util.JsonObject;
 
 public class AckMessageHandler : MessageHandler {
     override
     public void handle(string cluster, string data, string from) {
         JsonObject dj = new JsonObject(data);
-        AckMessage ackMessage = dj.mapTo(AckMessage.class);
+        AckMessage ackMessage = dj.mapTo!(AckMessage)();
 
         List!(GossipDigest) olders = ackMessage.getOlders();
         Map!(GossipMember, HeartbeatState) newers = ackMessage.getNewers();
@@ -41,7 +42,7 @@ public class AckMessageHandler : MessageHandler {
             GossipManager.getInstance().apply2LocalState(newers);
         }
 
-        Map!(GossipMember, HeartbeatState) deltaEndpoints = new HashMap<>();
+        Map!(GossipMember, HeartbeatState) deltaEndpoints = new HashMap!(GossipMember, HeartbeatState)();
         if (olders != null) {
             foreach(GossipDigest d ; olders) {
                 GossipMember member = GossipManager.getInstance().createByDigest(d);

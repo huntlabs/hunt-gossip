@@ -18,7 +18,7 @@ import hunt.logging;
 
 
 public interface MessageHandler {
-    Logger LOGGER = LoggerFactory.getLogger(MessageHandler.class);
+    // Logger LOGGER = LoggerFactory.getLogger(MessageHandler.class);
 
     void handle(string cluster, string data, string from);
 }

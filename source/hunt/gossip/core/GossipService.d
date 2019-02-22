@@ -14,20 +14,23 @@
 
 module hunt.gossip.core.GossipService;
 
-import io.netty.util.internal.StringUtil;
+import hunt.text.StringUtils;
 import hunt.logging;
 import hunt.gossip.event.GossipListener;
 import hunt.gossip.model.SeedMember;
 
 import hunt.collection.List;
-
+import hunt.gossip.util.Common;
+import hunt.Integer;
+import hunt.gossip.core.GossipSettings;
+import hunt.gossip.core.GossipManager;
 
 public class GossipService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GossipService.class);
+    // private static final Logger LOGGER = LoggerFactory.getLogger(GossipService.class);
 
-    public GossipService(string cluster, string ipAddress, Integer port, string id, List!(SeedMember) seedMembers, GossipSettings settings, GossipListener listener) throws Exception {
+    public this(string cluster, string ipAddress, Integer port, string id, List!(SeedMember) seedMembers, GossipSettings settings, GossipListener listener) /* throws Exception */ {
         checkParams(cluster, ipAddress, port, seedMembers);
-        if (StringUtil.isNullOrEmpty(id)) {
+        if (isNullOrEmpty(id)) {
             id = ipAddress.concat(":").concat(string.valueOf(port));
         }
         GossipManager.getInstance().init(cluster, ipAddress, port, id, seedMembers, settings, listener);
@@ -51,14 +54,14 @@ public class GossipService {
         }
     }
 
-    private void checkParams(string cluster, string ipAddress, Integer port, List!(SeedMember) seedMembers) throws Exception {
+    private void checkParams(string cluster, string ipAddress, Integer port, List!(SeedMember) seedMembers) /* throws Exception */ {
         string f = "[%s] is required!";
         string who = null;
-        if (StringUtil.isNullOrEmpty(cluster)) {
+        if (isNullOrEmpty(cluster)) {
             who = "cluster";
-        } else if (StringUtil.isNullOrEmpty(ipAddress)) {
+        } else if (isNullOrEmpty(ipAddress)) {
             who = "ip";
-        } else if (StringUtil.isNullOrEmpty(string.valueOf(port))) {
+        } else if (isNullOrEmpty(string.valueOf(port))) {
             who = "port";
         } else if (seedMembers == null || seedMembers.isEmpty()) {
             who = "seed member";

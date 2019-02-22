@@ -30,12 +30,18 @@ public class GossipSettings {
     private int networkDelay = 200;
 
     //Which message sync implementation. Default is UDPMsgService.class
-    private MsgService msgService = new UDPMsgService();
+    private MsgService msgService;
 
     //Delete the deadth node when the sync message is not received more than [deleteThreshold] times
     private int deleteThreshold = 3;
 
     private List!(SeedMember) seedMembers;
+
+    this()
+    {
+        seedMembers =  new ArrayList!(SeedMember)();
+        msgService = new UDPMsgService();
+    }
 
     public int getGossipInterval() {
         return gossipInterval;
@@ -58,9 +64,9 @@ public class GossipSettings {
     }
 
      public void setSeedMembers(List!(SeedMember) seedMembers) {
-        List!(SeedMember) _seedMembers = new ArrayList<>();
+        List!(SeedMember) _seedMembers = new ArrayList!(SeedMember)();
         if(seedMembers != null && !seedMembers.isEmpty()){
-            for(SeedMember seed : seedMembers){
+            foreach(SeedMember seed ;seedMembers){
                 if(!seed.eigenvalue().equalsIgnoreCase(GossipManager.getInstance().getSelf().eigenvalue())){
                     if(!_seedMembers.contains(seed)){
                         _seedMembers.add(seed);

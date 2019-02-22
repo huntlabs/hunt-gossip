@@ -14,18 +14,19 @@
 
 module hunt.gossip.model.SyncMessage;
 
-import java.io.Serializable;
+import hunt.io.Common;
 import hunt.collection.List;
+import hunt.gossip.model.GossipDigest;
 
 
 public class SyncMessage : Serializable {
     private string cluster;
     private List!(GossipDigest) digestList;
 
-    public SyncMessage() {
+    public this() {
     }
 
-    public SyncMessage(string cluster, List!(GossipDigest) digestList) {
+    public this(string cluster, List!(GossipDigest) digestList) {
         this.cluster = cluster;
         this.digestList = digestList;
     }

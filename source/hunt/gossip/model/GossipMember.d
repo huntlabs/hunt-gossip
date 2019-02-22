@@ -14,8 +14,9 @@
 
 module hunt.gossip.model.GossipMember;
 
-import java.io.Serializable;
-
+import hunt.io.Common;
+import hunt.Integer;
+import hunt.gossip.model.GossipState;
 
 public class GossipMember : Serializable {
     private string cluster;
@@ -24,10 +25,10 @@ public class GossipMember : Serializable {
     private string id;
     private GossipState state;
 
-    public GossipMember() {
+    public this() {
     }
 
-    public GossipMember(string cluster, string ipAddress, Integer port, string id, GossipState state) {
+    public this(string cluster, string ipAddress, Integer port, string id, GossipState state) {
         this.cluster = cluster;
         this.ipAddress = ipAddress;
         this.port = port;
@@ -90,22 +91,22 @@ public class GossipMember : Serializable {
     }
 
     override
-    public boolean equals(Object o) {
+    public bool opEquals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        GossipMember member = (GossipMember) o;
+        GossipMember member = cast(GossipMember) o;
 
-        if (!cluster.equals(member.cluster)) return false;
-        if (!ipAddress.equals(member.ipAddress)) return false;
-        return port.equals(member.port);
+        if (!cluster.opEquals(member.cluster)) return false;
+        if (!ipAddress.opEquals(member.ipAddress)) return false;
+        return port.opEquals(member.port);
     }
 
     override
-    public int hashCode() {
-        int result = cluster.hashCode();
-        result = 31 * result + ipAddress.hashCode();
-        result = 31 * result + port.hashCode();
+    public  size_t toHash() @trusted nothrow {
+        int result = cluster.toHash();
+        result = 31 * result + ipAddress.toHash();
+        result = 31 * result + port.toHash();
         return result;
     }
 

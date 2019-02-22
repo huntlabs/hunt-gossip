@@ -12,3 +12,4 @@ hunt-gossip-test-*
 *.o
 *.obj
 *.lst
+dub.selections.json

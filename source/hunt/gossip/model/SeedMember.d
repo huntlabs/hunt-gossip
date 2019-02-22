@@ -13,8 +13,9 @@
 // limitations under the License.
 
 module hunt.gossip.model.SeedMember;
+import hunt.Integer;
+import hunt.io.Common;
 
-import java.io.Serializable;
 
 
 public class SeedMember : Serializable {
@@ -23,14 +24,14 @@ public class SeedMember : Serializable {
     private Integer port;
     private string id;
 
-    public SeedMember(string cluster, string ipAddress, Integer port, string id) {
+    public this(string cluster, string ipAddress, Integer port, string id) {
         this.cluster = cluster;
         this.ipAddress = ipAddress;
         this.port = port;
         this.id = id;
     }
 
-    public SeedMember() {
+    public this() {
 
     }
 
@@ -71,22 +72,22 @@ public class SeedMember : Serializable {
     }
 
     override
-    public boolean equals(Object o) {
+    public bool opEquals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SeedMember that = (SeedMember) o;
+        SeedMember that = cast(SeedMember) o;
 
-        if (!cluster.equals(that.cluster)) return false;
-        if (!ipAddress.equals(that.ipAddress)) return false;
-        return port.equals(that.port);
+        if (!cluster.opEquals(that.cluster)) return false;
+        if (!ipAddress.opEquals(that.ipAddress)) return false;
+        return port.opEquals(that.port);
     }
 
     override
-    public int hashCode() {
-        int result = cluster.hashCode();
-        result = 31 * result + ipAddress.hashCode();
-        result = 31 * result + port.hashCode();
+    public size_t toHash() @trusted nothrow {
+        int result = cluster.toHash();
+        result = 31 * result + ipAddress.toHash();
+        result = 31 * result + port.toHash();
         return result;
     }
 

@@ -20,7 +20,7 @@ import hunt.gossip.core.VersionHelper;
 
 public class HeartbeatState {
     private long heartbeatTime;
-    private long version;
+    private long _version;
 
     public long getHeartbeatTime() {
         return heartbeatTime;
@@ -31,29 +31,29 @@ public class HeartbeatState {
     }
 
     public long getVersion() {
-        return version;
+        return _version;
     }
 
-    public void setVersion(long version) {
-        this.version = version;
+    public void setVersion(long _version) {
+        this._version = _version;
     }
 
-    public HeartbeatState() {
+    public this() {
         this.heartbeatTime = System.currentTimeMillis();
-        this.version = VersionHelper.getInstance().nextVersion();
+        this._version = VersionHelper.getInstance().nextVersion();
     }
 
     public long updateVersion() {
         setHeartbeatTime(System.currentTimeMillis());
-        this.version = VersionHelper.getInstance().nextVersion();
-        return version;
+        this._version = VersionHelper.getInstance().nextVersion();
+        return _version;
     }
 
     override
     public string toString() {
         return "HeartbeatState{" ~
                 "heartbeatTime=" ~ heartbeatTime ~
-                ", version=" ~ version ~
+                ", _version=" ~ _version ~
                 '}';
     }
 }

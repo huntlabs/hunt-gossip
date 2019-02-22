@@ -20,8 +20,10 @@ module hunt.gossip.model.Ack2Message;
 import hunt.gossip.core.CustomDeserializer;
 import hunt.gossip.core.CustomSerializer;
 
-import java.io.Serializable;
+import hunt.io.Common;
 import hunt.collection.Map;
+import hunt.gossip.model.GossipMember;
+import hunt.gossip.model.HeartbeatState;
 
 
 public class Ack2Message : Serializable {
@@ -29,10 +31,10 @@ public class Ack2Message : Serializable {
     // @JsonDeserialize(keyUsing = CustomDeserializer.class)
     private Map!(GossipMember, HeartbeatState) endpoints;
 
-    public Ack2Message() {
+    public this() {
     }
 
-    public Ack2Message(Map!(GossipMember, HeartbeatState) endpoints) {
+    public this(Map!(GossipMember, HeartbeatState) endpoints) {
 
         this.endpoints = endpoints;
     }

@@ -14,12 +14,13 @@
 
 module hunt.gossip.handler.Ack2MessageHandler;
 
-import io.vertx.core.json.JsonObject;
+import std.json;
 import hunt.gossip.core.GossipManager;
 import hunt.gossip.model.Ack2Message;
 import hunt.gossip.model.GossipMember;
 import hunt.gossip.model.HeartbeatState;
-
+import hunt.gossip.util.JsonObject;
+import hunt.gossip.handler.MessageHandler;
 import hunt.collection.Map;
 
 
@@ -27,7 +28,7 @@ public class Ack2MessageHandler : MessageHandler {
     override
     public void handle(string cluster, string data, string from) {
         JsonObject dj = new JsonObject(data);
-        Ack2Message ack2Message = dj.mapTo(Ack2Message.class);
+        Ack2Message ack2Message = dj.mapTo!(Ack2Message)();
 
         Map!(GossipMember, HeartbeatState) deltaEndpoints = ack2Message.getEndpoints();
         GossipManager.getInstance().apply2LocalState(deltaEndpoints);

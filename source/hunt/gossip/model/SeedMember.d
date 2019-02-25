@@ -85,7 +85,7 @@ public class SeedMember : Serializable {
 
     override
     public size_t toHash() @trusted nothrow {
-        int result = cluster.hashOf();
+        size_t result = cluster.hashOf();
         result = 31 * result + ipAddress.hashOf();
         result = 31 * result + port.hashOf();
         return result;

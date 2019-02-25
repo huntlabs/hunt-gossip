@@ -18,6 +18,7 @@ import hunt.io.Common;
 import hunt.Integer;
 import hunt.gossip.model.GossipState;
 import std.conv;
+import std.json;
 
 public class GossipMember : Serializable {
     private string cluster;
@@ -105,7 +106,7 @@ public class GossipMember : Serializable {
 
     override
     public  size_t toHash() @trusted nothrow {
-        int result = cluster.hashOf();
+        size_t result = cluster.hashOf();
         result = 31 * result + ipAddress.hashOf();
         result = 31 * result + port.hashOf();
         return result;
@@ -117,5 +118,27 @@ public class GossipMember : Serializable {
     
     public string eigenvalue(){
         return getCluster() ~ (":") ~ (getIpAddress()) ~ (":") ~ (getPort().toString());
+    }
+
+    public JSONValue encode()
+    {
+        JSONValue data;
+        data["cluster"] = cluster;
+        data["ipAddress"] = ipAddress;
+        data["port"] = port.intValue();
+        data["id"] = id;
+        data["state"] = state.state();
+        return data;
+    }
+
+    public static GossipMember decode(JSONValue data)
+    {
+        try
+        {
+            GossipMember gm = new GossipMember(data["cluster"].str,data["ipAddress"].str,new Integer(cast(int)(data["port"].integer)),data["id"].str,GossipState(data["state"].str));
+            return gm;
+        }catch(Exception e)
+        {}
+        return null;
     }
 }

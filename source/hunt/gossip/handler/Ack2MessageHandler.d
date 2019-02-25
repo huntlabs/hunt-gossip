@@ -27,8 +27,8 @@ import hunt.collection.Map;
 public class Ack2MessageHandler : MessageHandler {
     override
     public void handle(string cluster, string data, string from) {
-        JsonObject dj = new JsonObject(data);
-        Ack2Message ack2Message = dj.mapTo!(Ack2Message)();
+        // JsonObject dj = new JsonObject(data);
+        Ack2Message ack2Message = Ack2Message.decode(parseJSON(data))/* dj.mapTo!(Ack2Message)() */;
 
         Map!(GossipMember, HeartbeatState) deltaEndpoints = ack2Message.getEndpoints();
         GossipManager.getInstance().apply2LocalState(deltaEndpoints);

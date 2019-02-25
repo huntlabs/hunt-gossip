@@ -26,7 +26,7 @@ class JsonObject
 
     public static JsonObject mapFrom(T)(T obj)
     {
-        return new JsonObject(toJSON(obj));
+        return new JsonObject(/* toJSON */(obj.encode()));
     }
 
     public string encode()

@@ -21,11 +21,13 @@ import hunt.gossip.core.CustomSerializer;
 
 import hunt.io.Common;
 import hunt.collection.List;
+import hunt.collection.ArrayList;
 import hunt.collection.Map;
+import hunt.collection.HashMap;
 import hunt.gossip.model.GossipDigest;
 import hunt.gossip.model.GossipMember;
 import hunt.gossip.model.HeartbeatState;
-
+import std.json;
 
 
 public class AckMessage : Serializable {
@@ -65,6 +67,42 @@ public class AckMessage : Serializable {
                 "olders=" ~ olders.toString ~
                 ", newers=" ~ newers.toString ~
                 '}';
+    }
+
+    public JSONValue encode()
+    {
+        JSONValue data;
+        JSONValue[] olders;
+        foreach(old; this.olders) {
+            olders ~= old.encode();
+        }
+        JSONValue newers;
+        foreach(GossipMember k, HeartbeatState v; this.newers) {
+            newers[k.encode.toString] = v.encode();
+        }
+        data["olders"] = JSONValue(olders);
+        data["newers"] = newers;
+        return data;
+    }
+
+    public static AckMessage decode(JSONValue data)
+    {
+        try
+        {
+            List!(GossipDigest) olders = new ArrayList!(GossipDigest)();
+            foreach(value; data["olders"].array) {
+                olders.add(GossipDigest.decode(value));
+            }
+            
+            Map!(GossipMember, HeartbeatState) newers = new HashMap!(GossipMember, HeartbeatState)();
+            foreach(string k, JSONValue v; data["newers"]) {
+                newers.put(GossipMember.decode(parseJSON(k)),HeartbeatState.decode(v));
+            }
+            AckMessage ackm = new AckMessage(olders,newers);
+            return ackm;
+        }catch(Exception e)
+        {}
+        return null;
     }
 
 }

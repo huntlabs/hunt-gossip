@@ -40,6 +40,7 @@ import hunt.collection.Set;
 import hunt.collection.HashMap;
 import hunt.concurrency.Executors;
 import hunt.concurrency.ScheduledExecutorService;
+import hunt.concurrency.ScheduledThreadPoolExecutor;
 import hunt.util.DateTime;
 // import hunt.concurrency.locks.ReentrantReadWriteLock;
 import core.sync.rwmutex;
@@ -51,6 +52,7 @@ import hunt.gossip.core.Serializer;
 import hunt.util.DateTime;
 import std.conv;
 import hunt.Exceptions;
+import core.time;
 
 public class GossipManager {
     // private static final Logger LOGGER = LoggerFactory.getLogger(GossipManager.class);
@@ -59,7 +61,7 @@ public class GossipManager {
     private bool _isWorking = false;
     // private ReentrantReadWriteLock rwlock = new ReentrantReadWriteLock();
     private ReadWriteMutex rwlock;
-    private ScheduledExecutorService doGossipExecutor;
+    private ScheduledThreadPoolExecutor doGossipExecutor;
 //    private ScheduledExecutorService clearExecutor = Executors.newSingleThreadScheduledExecutor();
 
     private Map!(GossipMember, HeartbeatState) endpointMembers ;
@@ -74,7 +76,7 @@ public class GossipManager {
 
     private this() {
         rwlock = new ReadWriteMutex();
-        doGossipExecutor = Executors.newScheduledThreadPool(1);
+        doGossipExecutor = cast(ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1);
         endpointMembers = new HashMap!(GossipMember, HeartbeatState)();
         liveMembers = new ArrayList!(GossipMember)();
         deadMembers = new ArrayList!(GossipMember)();
@@ -108,7 +110,7 @@ public class GossipManager {
         logInfo("Starting gossip! cluster[%s] ip[%s] port[%d] id[%s]", localGossipMember.getCluster(), localGossipMember.getIpAddress(), localGossipMember.getPort(), localGossipMember.getId());
         _isWorking = true;
         settings.getMsgService().listen(getSelf().getIpAddress(), getSelf().getPort().intValue);
-        doGossipExecutor.scheduleAtFixedRate(new GossipTask(), settings.getGossipInterval(), settings.getGossipInterval(), TimeUnit.Millisecond);
+        doGossipExecutor.scheduleAtFixedRate(new GossipTask(), msecs(settings.getGossipInterval()), msecs(settings.getGossipInterval()));
     }
 
     public List!(GossipMember) getLiveMembers() {

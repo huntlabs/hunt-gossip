@@ -31,8 +31,8 @@ import hunt.gossip.util.JsonObject;
 public class AckMessageHandler : MessageHandler {
     override
     public void handle(string cluster, string data, string from) {
-        JsonObject dj = new JsonObject(data);
-        AckMessage ackMessage = dj.mapTo!(AckMessage)();
+        // JsonObject dj = new JsonObject(data);
+        AckMessage ackMessage = AckMessage.decode(parseJSON(data))/* dj.mapTo!(AckMessage)() */;
 
         List!(GossipDigest) olders = ackMessage.getOlders();
         Map!(GossipMember, HeartbeatState) newers = ackMessage.getNewers();

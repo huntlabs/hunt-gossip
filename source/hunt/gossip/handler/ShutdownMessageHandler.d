@@ -24,8 +24,8 @@ import hunt.gossip.handler.MessageHandler;
 public class ShutdownMessageHandler : MessageHandler {
     override
     public void handle(string cluster, string data, string from) {
-        JsonObject dj = new JsonObject(data);
-        GossipMember whoShutdown = dj.mapTo!(GossipMember)();
+        // JsonObject dj = new JsonObject(data);
+        GossipMember whoShutdown = GossipMember.decode(parseJSON(data))/* dj.mapTo!(GossipMember)() */;
         if (whoShutdown !is null) {
             GossipManager.getInstance().down(whoShutdown);
         }

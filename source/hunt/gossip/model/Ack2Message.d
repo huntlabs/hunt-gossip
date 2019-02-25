@@ -22,9 +22,10 @@ import hunt.gossip.core.CustomSerializer;
 
 import hunt.io.Common;
 import hunt.collection.Map;
+import hunt.collection.HashMap;
 import hunt.gossip.model.GossipMember;
 import hunt.gossip.model.HeartbeatState;
-
+import std.json;
 
 public class Ack2Message : Serializable {
     // @JsonSerialize(keyUsing = CustomSerializer.class)
@@ -52,5 +53,29 @@ public class Ack2Message : Serializable {
 
     public void setEndpoints(Map!(GossipMember, HeartbeatState) endpoints) {
         this.endpoints = endpoints;
+    }
+
+    public JSONValue encode()
+    {
+        JSONValue data;
+        foreach(GossipMember k, HeartbeatState v; endpoints) {
+            data[k.encode.toString] = v.encode();
+        }
+        return data;
+    }
+
+    public static Ack2Message decode(JSONValue data)
+    {
+        try
+        {
+            Map!(GossipMember, HeartbeatState) es = new HashMap!(GossipMember, HeartbeatState)();
+            foreach(string k, JSONValue v; data) {
+                es.put(GossipMember.decode(parseJSON(k)),HeartbeatState.decode(v));
+            }
+            Ack2Message ack2m = new Ack2Message(es);
+            return ack2m;
+        }catch(Exception e)
+        {}
+        return null;
     }
 }

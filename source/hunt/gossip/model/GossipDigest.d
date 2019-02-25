@@ -22,6 +22,9 @@ import std.conv;
 import std.json;
 
 public class GossipDigest : Serializable, Comparable!(GossipDigest) {
+
+    alias opCmp = Object.opCmp;
+
     private InetSocketAddress endpoint;
     private long heartbeatTime;
     private long _version;
@@ -33,6 +36,11 @@ public class GossipDigest : Serializable, Comparable!(GossipDigest) {
             return cast(int) (heartbeatTime - o.heartbeatTime);
         }
         return cast(int) (_version - o._version);
+    }
+
+    public int opCmp(GossipDigest o)
+    {
+        return compareTo(o);
     }
 
     public this() {

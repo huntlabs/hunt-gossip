@@ -18,6 +18,7 @@ module hunt.gossip.model.HeartbeatState;
 import hunt.gossip.core.VersionHelper;
 import hunt.util.DateTime;
 import std.conv;
+import std.json;
 
 public class HeartbeatState {
     private long heartbeatTime;
@@ -54,7 +55,28 @@ public class HeartbeatState {
     public string toString() {
         return "HeartbeatState{" ~
                 "heartbeatTime=" ~ heartbeatTime.to!string ~
-                ", _version=" ~ _version.to!string ~
+                ", version=" ~ _version.to!string ~
                 '}';
+    }
+
+    public JSONValue encode()
+    {
+        JSONValue data;
+        data["heartbeatTime"] = heartbeatTime;
+        data["version"] = _version;
+        return data;
+    }
+
+    public static HeartbeatState decode(JSONValue data)
+    {
+        try
+        {
+            HeartbeatState hs = new HeartbeatState();
+            hs.setHeartbeatTime(data["heartbeatTime"].integer);
+            hs.setVersion(data["version"].integer);
+            return hs;
+        }catch(Exception e)
+        {}
+        return null;
     }
 }

@@ -26,12 +26,16 @@ public class GossipMessageFactory {
     public enum string KEY_CLUSTER = "cluster";
     public enum string KEY_FROM = "from";
 
-    shared static this()
-    {
-        GossipMessageFactory.ourInstance = new GossipMessageFactory();
-    }
+    // shared static this()
+    // {
+    //     GossipMessageFactory.ourInstance = new GossipMessageFactory();
+    // }
 
     public static GossipMessageFactory getInstance() {
+        if(ourInstance is null)
+        {
+            ourInstance = new GossipMessageFactory();
+        }
         return ourInstance;
     }
 

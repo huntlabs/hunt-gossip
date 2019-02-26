@@ -68,11 +68,21 @@ public class UDPMsgService : MsgService
         // });
 
         _udpSocket.bind(ipAddress, cast(ushort)port).setReadData((in ubyte[] data, Address addr) {
-            debug writefln("Server => client: %s, received: %s", addr, cast(string) data);
+            logInfof("Server => client: %s, received: %s", addr, cast(string) data);
             handleMsg(Buffer.buffer().appendString(cast(string) data));
         }).start();
 
+    }
+
+    public void start()
+    {
         _loop.run();
+    }
+
+    public void stop()
+    {
+        _loop.stop();
+        unListen();
     }
 
     override public void handleMsg(Buffer data)
@@ -117,7 +127,7 @@ public class UDPMsgService : MsgService
 
     override public void sendMsg(string targetIp, Integer targetPort, Buffer data)
     {
-        if (targetIp !is null && targetPort !is null && data !is null)
+        if (targetIp !is null && targetPort !is null && data !is null && _udpSocket !is null)
         {
             // socket.send(data, targetPort, targetIp, asyncResult -> {
             // });

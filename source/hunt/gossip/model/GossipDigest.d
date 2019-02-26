@@ -115,7 +115,7 @@ public class GossipDigest : Serializable, Comparable!(GossipDigest) {
             gd.setHeartbeatTime(data["heartbeatTime"].integer);
             gd.setVersion(data["version"].integer);
             gd.setId(data["id"].str);
-            gd.setEndpoint(new InetSocketAddress(data["ip"].str,cast(int)(data["port"].integer)));
+            gd.setEndpoint(new InetSocketAddress(data["endpoint"]["ip"].str,cast(int)(data["endpoint"]["port"].integer)));
             return gd;
         }catch(Exception e)
         {}

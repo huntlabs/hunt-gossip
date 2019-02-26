@@ -95,10 +95,10 @@ public class GossipMember : Serializable {
     override
     public bool opEquals(Object o) {
         if (this is o) return true;
-        if (o is null || typeid(this) != typeid(o)) return false;
+        if (o is null) return false;
 
         GossipMember member = cast(GossipMember) o;
-
+        if(member is null) return false;
         if (!(cluster == member.cluster)) return false;
         if (!(ipAddress == member.ipAddress)) return false;
         return port.intValue() == member.port.intValue();

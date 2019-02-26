@@ -23,8 +23,8 @@ public struct MessageType {
 
     private  string _type;
 
-    this(string type) {
-        this._type = type;
+    this(string t) {
+        this._type = t;
     }
 
     public string type()

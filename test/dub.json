@@ -1,0 +1,12 @@
+{
+	"name": "test",
+	"authors": [
+		"gaoxincheng"
+	],
+	"description": "a test for goossip",
+	"copyright": "Copyright © 2019, Huntlabs",
+	"license": "Apache-2.0",
+	"dependencies": {
+        "hunt-gossip":{"path": "../"}
+    }
+}

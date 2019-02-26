@@ -28,4 +28,8 @@ public interface MsgService {
     void sendMsg(string targetIp, Integer targetPort, Buffer data);
 
     void unListen();
+
+    void start();
+
+    void stop();
 }

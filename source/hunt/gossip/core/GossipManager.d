@@ -107,10 +107,11 @@ public class GossipManager {
     }
 
     public  void start() {
-        logInfo("Starting gossip! cluster[%s] ip[%s] port[%d] id[%s]", localGossipMember.getCluster(), localGossipMember.getIpAddress(), localGossipMember.getPort(), localGossipMember.getId());
+        logInfof("Starting gossip! cluster[%s] ip[%s] port[%d] id[%s]", localGossipMember.getCluster(), localGossipMember.getIpAddress(), localGossipMember.getPort().intValue(), localGossipMember.getId());
         _isWorking = true;
         settings.getMsgService().listen(getSelf().getIpAddress(), getSelf().getPort().intValue);
         doGossipExecutor.scheduleAtFixedRate(new GossipTask(), msecs(settings.getGossipInterval()), msecs(settings.getGossipInterval()));
+        settings.getMsgService().start();
     }
 
     public List!(GossipMember) getLiveMembers() {
@@ -176,7 +177,7 @@ public class GossipManager {
             }
             version(HUNT_DEBUG) {
                 trace("sync data");
-                trace("Now my heartbeat version is %d", newversion);
+                tracef("Now my heartbeat version is %ld", newversion);
             }
 
             List!(GossipDigest) digests = new ArrayList!(GossipDigest)();
@@ -215,7 +216,8 @@ public class GossipManager {
         foreach(GossipDigest e ; digests) {
             array ~= e.encode()/* JSONValue(Serializer.getInstance().encode!(GossipDigest)(e).toString()) */;
         }
-        buffer.appendString(GossipMessageFactory.getInstance().makeMessage(MessageType.SYNC_MESSAGE, JSONValue(array).toString, getCluster(), getSelf().ipAndPort()).encode());
+        if(buffer !is null)
+            buffer.appendString(GossipMessageFactory.getInstance().makeMessage(MessageType.SYNC_MESSAGE, JSONValue(array).toString, getCluster(), getSelf().ipAndPort()).encode());
         return buffer;
     }
 
@@ -349,6 +351,7 @@ public class GossipManager {
                 return;
             }
             int index = (size == 1) ? 0 : uniform(0,size);
+            // logInfo("size : ",size," index : ",index);
             if (liveMembers.size() == 1) {
                 sendGossip2Seed(buffer, settings.getSeedMembers(), index);
             } else {
@@ -555,7 +558,7 @@ public class GossipManager {
 
 
     public void shutdown() {
-        getSettings().getMsgService().unListen();
+        getSettings().getMsgService().stop();
         doGossipExecutor.shutdown();
         try {
             import core.thread;

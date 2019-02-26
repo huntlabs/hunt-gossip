@@ -43,6 +43,8 @@ public class SyncMessageHandler : MessageHandler {
                 List!(GossipMember) gMemberList = new ArrayList!(GossipMember)();
                 foreach(JSONValue e ; array.array) {
                     GossipDigest g = GossipDigest.decode(e)/* Serializer.getInstance().decode!(GossipDigest)(Buffer.buffer().appendString(e.toString())) */;
+                    if(g is null)
+                        logError("GossipDigest decode error : ",e);
                     GossipMember member = new GossipMember();
                     member.setCluster(cluster);
                     member.setIpAddress(g.getEndpoint().getIp());

@@ -1,4 +1,4 @@
-// Copyright (c) 2017 The jgossip Authors. All rights reserved.
+// Copyright (C) 2018-2019 HuntLabs. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 
 module hunt.gossip.handler.AckMessageHandler;
 
-import hunt.gossip.util.Buffer;
+import hunt.gossip.Buffer;
 import std.json;
-import hunt.gossip.core.GossipManager;
+import hunt.gossip.GossipManager;
 import hunt.gossip.model.Ack2Message;
 import hunt.gossip.model.AckMessage;
 import hunt.gossip.model.GossipDigest;
@@ -26,7 +26,7 @@ import hunt.gossip.handler.MessageHandler;
 import hunt.collection.HashMap;
 import hunt.collection.List;
 import hunt.collection.Map;
-import hunt.gossip.util.JsonObject;
+import hunt.gossip.JsonObject;
 
 public class AckMessageHandler : MessageHandler {
     override

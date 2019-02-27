@@ -1,4 +1,4 @@
-// Copyright (c) 2017 The jgossip Authors. All rights reserved.
+// Copyright (C) 2018-2019 HuntLabs. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,11 @@
 
 module hunt.gossip.net.MsgService;
 
-import hunt.gossip.util.Buffer;
+import hunt.gossip.Buffer;
 import hunt.logging;
 import hunt.Integer;
 
 public interface MsgService {
-    // Logger LOGGER = LoggerFactory.getLogger(MsgService.class);
 
     void listen(string ipAddress, int port);
 

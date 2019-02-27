@@ -1,4 +1,4 @@
-// Copyright (c) 2017 The jgossip Authors. All rights reserved.
+// Copyright (C) 2018-2019 HuntLabs. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module hunt.gossip.core.GossipManager;
+module hunt.gossip.GossipManager;
 
-import hunt.gossip.util.Buffer;
+import hunt.gossip.Buffer;
 import std.json;
 
 import hunt.logging;
@@ -28,7 +28,7 @@ import hunt.gossip.model.GossipState;
 import hunt.gossip.model.HeartbeatState;
 import hunt.gossip.model.MessageType;
 import hunt.gossip.model.SeedMember;
-import hunt.gossip.core.GossipMessageFactory;
+import hunt.gossip.GossipMessageFactory;
 
 // import java.net.UnknownHostException;
 import hunt.collection.ArrayList;
@@ -44,11 +44,11 @@ import hunt.concurrency.ScheduledThreadPoolExecutor;
 import hunt.util.DateTime;
 // import hunt.concurrency.locks.ReentrantReadWriteLock;
 import core.sync.rwmutex;
-import hunt.gossip.util.JsonObject;
-import hunt.gossip.core.GossipSettings;
+import hunt.gossip.JsonObject;
+import hunt.gossip.GossipSettings;
 import hunt.Integer;
 import hunt.util.Common;
-import hunt.gossip.core.Serializer;
+import hunt.gossip.Serializer;
 import hunt.util.DateTime;
 import std.conv;
 import hunt.Exceptions;

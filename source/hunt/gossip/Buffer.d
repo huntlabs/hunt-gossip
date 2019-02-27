@@ -1,7 +1,6 @@
-module hunt.gossip.util.Buffer;
+module hunt.gossip.Buffer;
 
 import hunt.util.Common;
-
 import std.ascii;
 import std.algorithm;
 import std.array;
@@ -10,7 +9,7 @@ import std.conv;
 import std.string;
 import std.uni;
 import std.json;
-import hunt.gossip.util.JsonObject;
+import hunt.gossip.JsonObject;
 
 
 class Buffer : Appendable {

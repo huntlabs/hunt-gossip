@@ -1,4 +1,4 @@
-// Copyright (c) 2017 The jgossip Authors. All rights reserved.
+// Copyright (C) 2018-2019 HuntLabs. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,5 @@ import hunt.logging;
 
 
 public interface MessageHandler {
-    // Logger LOGGER = LoggerFactory.getLogger(MessageHandler.class);
-
     void handle(string cluster, string data, string from);
 }

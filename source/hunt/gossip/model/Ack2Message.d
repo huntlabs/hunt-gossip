@@ -1,4 +1,4 @@
-// Copyright (c) 2017 The jgossip Authors. All rights reserved.
+// Copyright (C) 2018-2019 HuntLabs. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,6 @@
 
 module hunt.gossip.model.Ack2Message;
 
-
-// import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-// import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import hunt.gossip.core.CustomDeserializer;
-import hunt.gossip.core.CustomSerializer;
-
 import hunt.io.Common;
 import hunt.collection.Map;
 import hunt.collection.HashMap;
@@ -28,8 +22,7 @@ import hunt.gossip.model.HeartbeatState;
 import std.json;
 
 public class Ack2Message : Serializable {
-    // @JsonSerialize(keyUsing = CustomSerializer.class)
-    // @JsonDeserialize(keyUsing = CustomDeserializer.class)
+
     private Map!(GossipMember, HeartbeatState) endpoints;
 
     public this() {

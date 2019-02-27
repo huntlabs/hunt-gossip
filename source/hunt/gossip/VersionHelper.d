@@ -1,4 +1,4 @@
-// Copyright (c) 2017 The jgossip Authors. All rights reserved.
+// Copyright (C) 2018-2019 HuntLabs. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module hunt.gossip.core.VersionHelper;
+module hunt.gossip.VersionHelper;
 
-// import hunt.concurrency.atomic.AtomicLong;
 import core.atomic;
 
 public class VersionHelper {

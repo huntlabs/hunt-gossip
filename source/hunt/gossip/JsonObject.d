@@ -1,4 +1,4 @@
-module hunt.gossip.util.JsonObject;
+module hunt.gossip.JsonObject;
 
 import hunt.util.Serialize;
 import std.json;

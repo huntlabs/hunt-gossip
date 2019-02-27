@@ -1,4 +1,4 @@
-// Copyright (c) 2017 The jgossip Authors. All rights reserved.
+// Copyright (C) 2018-2019 HuntLabs. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,15 +15,10 @@
 module hunt.gossip.net.udp.UDPMsgService;
 
 import hunt.text.StringUtils;
-
-// import io.vertx.core.Vertx;
-import hunt.gossip.util.Buffer;
-
-// import io.vertx.core.datagram.DatagramSocket;
-// import io.vertx.core.datagram.DatagramSocketOptions;
+import hunt.gossip.Buffer;
 import std.json;
-import hunt.gossip.core.GossipManager;
-import hunt.gossip.core.GossipMessageFactory;
+import hunt.gossip.GossipManager;
+import hunt.gossip.GossipMessageFactory;
 import hunt.gossip.handler.Ack2MessageHandler;
 import hunt.gossip.handler.AckMessageHandler;
 import hunt.gossip.handler.MessageHandler;
@@ -31,8 +26,8 @@ import hunt.gossip.handler.ShutdownMessageHandler;
 import hunt.gossip.handler.SyncMessageHandler;
 import hunt.gossip.model.MessageType;
 import hunt.gossip.net.MsgService;
-import hunt.gossip.util.JsonObject;
-import hunt.gossip.util.Common;
+import hunt.gossip.JsonObject;
+import hunt.gossip.Common;
 import hunt.Integer;
 import hunt.logging;
 import hunt.event;
@@ -46,7 +41,6 @@ import std.stdio;
 
 public class UDPMsgService : MsgService
 {
-    // DatagramSocket socket;
     EventLoop _loop;
     UdpSocket _udpSocket;
 
@@ -58,15 +52,6 @@ public class UDPMsgService : MsgService
 
     override public void listen(string ipAddress, int port)
     {
-        // socket = Vertx.vertx().createDatagramSocket(new DatagramSocketOptions());
-        // socket.listen(port, ipAddress, asyncResult -> {
-        //     if (asyncResult.succeeded()) {
-        //         socket.handler(packet -> handleMsg(packet.data()));
-        //     } else {
-        //         logError("Listen failed " ~ asyncResult.cause());
-        //     }
-        // });
-
         _udpSocket.bind(ipAddress, cast(ushort)port).setReadData((in ubyte[] data, Address addr) {
             logInfof("Server => client: %s, received: %s", addr, cast(string) data);
             handleMsg(Buffer.buffer().appendString(cast(string) data));
@@ -129,8 +114,6 @@ public class UDPMsgService : MsgService
     {
         if (targetIp !is null && targetPort !is null && data !is null && _udpSocket !is null)
         {
-            // socket.send(data, targetPort, targetIp, asyncResult -> {
-            // });
             _udpSocket.sendTo(data.data(), new InternetAddress(targetIp,cast(ushort)(targetPort.intValue)));
         }
     }
@@ -139,13 +122,6 @@ public class UDPMsgService : MsgService
     {
         if (_udpSocket !is null)
         {
-            // socket.close(asyncResult -> {
-            //     if (asyncResult.succeeded()) {
-            //         logInfo("Socket was close!");
-            //     } else {
-            //         logError("Close socket an error has occurred. " ~ asyncResult.cause().msg);
-            //     }
-            // });
             _udpSocket.close();
         }
     }

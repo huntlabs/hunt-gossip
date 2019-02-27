@@ -1,4 +1,4 @@
-module hunt.gossip.util.Common;
+module hunt.gossip.Common;
 
 bool isNullOrEmpty(string str)
 {

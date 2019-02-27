@@ -1,4 +1,4 @@
-// Copyright (c) 2017 The jgossip Authors. All rights reserved.
+// Copyright (C) 2018-2019 HuntLabs. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module hunt.gossip.core.GossipService;
+module hunt.gossip.GossipService;
 
 import hunt.text.StringUtils;
 import hunt.logging;
@@ -20,10 +20,10 @@ import hunt.gossip.event.GossipListener;
 import hunt.gossip.model.SeedMember;
 
 import hunt.collection.List;
-import hunt.gossip.util.Common;
+import hunt.gossip.Common;
 import hunt.Integer;
-import hunt.gossip.core.GossipSettings;
-import hunt.gossip.core.GossipManager;
+import hunt.gossip.GossipSettings;
+import hunt.gossip.GossipManager;
 import std.conv;
 import hunt.Exceptions;
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2017 The jgossip Authors. All rights reserved.
+// Copyright (C) 2018-2019 HuntLabs. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
 // limitations under the License.
 
 module hunt.gossip.event.GossipListener;
-
 
 import hunt.gossip.model.GossipMember;
 import hunt.gossip.model.GossipState;

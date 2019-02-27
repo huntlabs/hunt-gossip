@@ -12,5 +12,5 @@ test-test-*
 *.o
 *.obj
 *.lst
-test
+test-gossip
 dub.selections.json
